@@ -1,12 +1,12 @@
-# [Prosjektnavn]-[Årstall]
+# Kantsone vegetasjon 2026
 
 _Vennligst fyll ut denne README.md-malen i henhold til instruksjonene. Gjør prosjektspesifikke tilpasninger der det er nødvendig. Fjern alle instruksjoner og kommentarer når du er ferdig._
 
-- **Norsk tittel**: [Prosjektnavn]-[Årstall]
+- **Norsk tittel**: Kantsone vegetasjon 2026
 - **Prosjekteier**: Miljødirektoratet
-- **Oppdragstaker**: [Oppdragstaker]
-- **Leveringsdato**: [Leveringsdato]
-- **Nedlastingslenke:** [dataleveranser.miljodirektoratet.no/nedlasting/leveranse-id](https://dataleveranser.miljodirektoratet.no/nedlasting/<leveranse-id>) _Fyll inn URL til nedlastingssiden for leveransen i Dataleveranse-applikasjonen (kun for offentlige leveranser)._
+- **Oppdragstaker**: Field Geospatial
+- **Leveringsdato**: 2026.11.02
+- **Nedlastingslenke:** [dataleveranser.miljodirektoratet.no/nedlasting/089a5626-c799-4465-871f-66da5bd6afaf/](https://dataleveranser.miljodirektoratet.no/nedlasting/089a5626-c799-4465-871f-66da5bd6afaf/) _Fyll inn URL til nedlastingssiden for leveransen i Dataleveranse-applikasjonen (kun for offentlige leveranser)._
 
 Kort beskrivelse av formål og innhold i repoet.
 
