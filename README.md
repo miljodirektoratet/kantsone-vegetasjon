@@ -10,7 +10,7 @@ _Vennligst fyll ut denne README.md-malen i henhold til instruksjonene. Gjør pro
 
 Kort beskrivelse av formål og innhold i repoet.
 
-- **English**:
+- **English**: 
 - **Norwegian**:
 
 Eksempel: "Beregninger av bestandsindekser og flerartsindekser i Norsk hekkefuglovervåking 2026"
@@ -18,13 +18,13 @@ Eksempel: "Beregninger av bestandsindekser og flerartsindekser i Norsk hekkefugl
 ## 1. Bidragsytere / Kontakt
 
 - **Navn**: [Navn på bidragsyter(e)]
-- **Organisasjon**: [Navn]
+- **Organisasjon**: Field Geospatial
 - **Epost**: [e-post]
 - **Eventuelle eksterne samarbeidspartnere:**
 
 ## 2. Formål / Bakgrunn
 
-- Kort om overvåkingsprogrammet
+- Kort om prosjekt
 - Hvilke metoder som brukes
 - Relevante referanser
 
