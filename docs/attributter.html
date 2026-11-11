@@ -1,0 +1,343 @@
+<title>Kantsoner attributtregister</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:    #F6F8F7;
+    --surface:  #FFFFFF;
+    --ink:      #0E1C1B;
+    --ink-soft: #4A5F5D;
+    --ink-faint:#7C8F8D;
+    --water:    #14625F;
+    --water-dim:#D3E5E3;
+    --land:     #A8791F;
+    --land-dim: #F0E4C9;
+    --rule:     #D9E2E0;
+    --ok:       #1F7A4D;  --ok-dim:    #D9EFE2;
+    --extra:    #14625F;  --extra-dim: #D3E5E3;
+    --miss:     #B3402B;  --miss-dim:  #F5DCD6;
+    --stub:     #A8791F;  --stub-dim:  #F0E4C9;
+    --code-bg:  #EEF3F2;
+    --shadow:   0 1px 2px rgba(14,28,27,.05), 0 8px 24px rgba(14,28,27,.05);
+    --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0B1413; --surface:#12201F; --ink:#E8F0EE; --ink-soft:#A2B5B2; --ink-faint:#718785;
+      --water:#5CBDB7; --water-dim:#173634; --land:#D9AC4E; --land-dim:#322816; --rule:#243634;
+      --ok:#6FCF97; --ok-dim:#163A28; --extra:#5CBDB7; --extra-dim:#173634;
+      --miss:#F08A72; --miss-dim:#3C1F19; --stub:#D9AC4E; --stub-dim:#322816; --code-bg:#182827;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0B1413; --surface:#12201F; --ink:#E8F0EE; --ink-soft:#A2B5B2; --ink-faint:#718785;
+    --water:#5CBDB7; --water-dim:#173634; --land:#D9AC4E; --land-dim:#322816; --rule:#243634;
+    --ok:#6FCF97; --ok-dim:#163A28; --extra:#5CBDB7; --extra-dim:#173634;
+    --miss:#F08A72; --miss-dim:#3C1F19; --stub:#D9AC4E; --stub-dim:#322816; --code-bg:#182827;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15.5px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1360px; margin:0 auto; padding: clamp(1.6rem,4vw,3.5rem) clamp(1rem,3vw,2.2rem) 5rem; display:flex; flex-direction:column; gap:1.8rem; }
+  .eyebrow { font-family:var(--display); font-size:.72rem; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--water); margin:0 0 .6rem; }
+  h1 { font-family:var(--display); font-size:clamp(1.9rem,4.5vw,2.9rem); font-weight:700; line-height:1.05; letter-spacing:-.02em; text-wrap:balance; margin:0 0 .8rem; }
+  .lede { font-size:1.05rem; color:var(--ink-soft); max-width:70ch; margin:0; }
+  h2 { font-family:var(--display); font-size:1.25rem; font-weight:600; letter-spacing:-.01em; margin:0; }
+  .summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.8rem; }
+  .tile { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:.85rem 1rem; box-shadow:var(--shadow); }
+  .tile .n { font-family:var(--display); font-size:1.7rem; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+  .tile .l { font-family:var(--display); font-size:.7rem; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-faint); margin-top:.35rem; }
+  .tile.ok .n{color:var(--ok)} .tile.extra .n{color:var(--extra)} .tile.miss .n{color:var(--miss)} .tile.stub .n{color:var(--stub)}
+  .controls { display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
+  .controls input { font-family:var(--mono); font-size:.85rem; padding:.5rem .7rem; border:1px solid var(--rule); border-radius:3px; background:var(--surface); color:var(--ink); min-width:16rem; }
+  .controls input:focus { outline:2px solid var(--water); outline-offset:1px; }
+  .chip { font-family:var(--display); font-size:.78rem; font-weight:600; padding:.38rem .7rem; border:1px solid var(--rule); border-radius:999px; background:var(--surface); color:var(--ink-soft); cursor:pointer; }
+  .chip[aria-pressed="true"] { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .chip:focus-visible { outline:2px solid var(--water); outline-offset:2px; }
+  .legend { font-family:var(--display); font-size:.8rem; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:1rem .9rem; }
+  .pill { display:inline-block; font-family:var(--display); font-size:.7rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:.18rem .5rem; border-radius:2px; white-space:nowrap; }
+  .pill.ok{background:var(--ok-dim);color:var(--ok)} .pill.extra{background:var(--extra-dim);color:var(--extra)}
+  .pill.miss{background:var(--miss-dim);color:var(--miss)} .pill.stub{background:var(--stub-dim);color:var(--stub)}
+  .pill.deliv{background:var(--land-dim);color:var(--land)}
+  .scroller { overflow-x:auto; background:var(--surface); border:1px solid var(--rule); border-radius:3px; box-shadow:var(--shadow); }
+  table { border-collapse:collapse; width:100%; min-width:960px; font-size:.9rem; table-layout:fixed; }
+  col.c-name{width:24%} col.c-status{width:9%} col.c-stage{width:11%} col.c-sys{width:4%} col.c-expl{width:52%}
+  thead th { position:sticky; top:0; background:var(--surface); z-index:2; font-family:var(--display); font-size:.7rem; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-faint); text-align:left; padding:.7rem .8rem; border-bottom:1px solid var(--rule); }
+  tbody td { padding:.6rem .8rem; border-bottom:1px solid var(--rule); vertical-align:top; }
+  tr.theme td { background:var(--paper); font-family:var(--display); font-weight:600; font-size:.82rem; letter-spacing:.06em; text-transform:uppercase; color:var(--water); padding:.55rem .8rem; }
+  td.name { font-family:var(--mono); font-size:.78rem; color:var(--ink); overflow-wrap:anywhere; line-height:1.45; }
+  td.name small { display:block; font-family:var(--display); font-size:.72rem; color:var(--ink-faint); white-space:normal; margin-top:.15rem; }
+  td.meta { font-family:var(--display); font-size:.78rem; color:var(--ink-soft); }
+  td.meta b { color:var(--ink); font-weight:600; }
+  td.expl { overflow-wrap:anywhere; }
+  code { font-family:var(--mono); font-size:.79rem; background:var(--code-bg); padding:.04rem .3rem; border-radius:2px; }
+  .f { display:block; font-family:var(--mono); font-size:.78rem; background:var(--code-bg); padding:.35rem .55rem; border-radius:2px; margin:.3rem 0 .15rem; white-space:pre-wrap; }
+  .dev { display:block; font-family:var(--display); font-size:.76rem; color:var(--land); margin-top:.25rem; }
+  .dev::before { content:"spesifikasjon ≠ kode ·​ "; font-weight:600; }
+  tr[hidden] { display:none; }
+  .note { background:var(--surface); border:1px solid var(--rule); border-top:3px solid var(--land); border-radius:3px; padding:1rem 1.2rem; box-shadow:var(--shadow); font-size:.95rem; }
+  .note p { margin:.3rem 0; }
+  footer { font-family:var(--display); font-size:.8rem; color:var(--ink-faint); }
+  @media (prefers-reduced-motion: no-preference) { .chip { transition: background .12s ease; } }
+</style>
+
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Kantsoner morfologi · attributtregister</p>
+    <h1>Hver attributt, hva den betyr og hvordan den beregnes</h1>
+    <p class="lede">
+      Én rad per attributtmønster: <code>{L,R}</code> gir én kolonne for venstre og én for høyre
+      bredd, <code>S</code> er begge breddene samlet, <code>B0-10</code> er båndet i meter fra
+      vannkanten. Formlene er slik de er <em>implementert</em>; der produktspesifikasjonen sier noe
+      annet, er avviket merket. <span class="pill deliv">levert</span> viser hva som er med i
+      leveransen (<code>delivery/</code> og den nasjonale sammenslåingen). Resten er mellomregninger
+      som bare finnes i <code>aggregation/</code>-tabellene.
+    </p>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Antall per status"></section>
+
+  <section class="controls" aria-label="Filtre">
+    <input id="q" type="search" placeholder="filtrer … f.eks. Vtot, filtrering, Ja/Nei" aria-label="Filtrer rader">
+    <button class="chip" data-f="all" aria-pressed="true">alle</button>
+    <button class="chip" data-f="ok" aria-pressed="false">i spesifikasjonen</button>
+    <button class="chip" data-f="extra" aria-pressed="false">utover spesifikasjonen</button>
+    <button class="chip" data-f="stub" aria-pressed="false">plassholder</button>
+    <button class="chip" data-f="miss" aria-pressed="false">mangler</button>
+    <button class="chip" data-f="deliv" aria-pressed="false">levert</button>
+  </section>
+
+  <div class="legend">
+    <span><span class="pill ok">ok</span> i spesifikasjonen og beregnet</span>
+    <span><span class="pill extra">ekstra</span> beregnet, men ikke navngitt i spesifikasjonen (mellomregninger, årsak, identitet)</span>
+    <span><span class="pill stub">plassholder</span> kolonnen finnes, men ingen datakilde fyller den</span>
+    <span><span class="pill miss">mangler</span> i spesifikasjonen, ikke beregnet</span>
+    <span><span class="pill deliv">levert</span> med i leveransen; nivåene står i forklaringen</span>
+  </div>
+
+  <div class="scroller">
+  <table id="t">
+    <colgroup><col class="c-name"><col class="c-status"><col class="c-stage"><col class="c-sys"><col class="c-expl"></colgroup>
+    <thead><tr><th>Attributt</th><th>Status</th><th>Trinn · modul</th><th>Sys</th><th>Forklaring · formel slik den er implementert</th></tr></thead>
+    <tbody>
+
+    <tr class="theme"><td colspan="5">Identitet — leveransenøklene</td></tr>
+    <tr data-s="extra"><td class="name">segment_id<small>f.eks. 010-11-1_010000235_00007</small></td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">10 m-biten av den offisielle elvenettlinjen: <code>{elvID}_{strekningLnr}_{løpenummer}</code>. Lages én gang i geometry; alle andre kolonner knyttes til den. 10 m, innsjøstrand, buffer10. Tas ut av 10 m og buffer10 i sammenslåingen (gjentar <code>segment_id_vann-nett</code>); leveres bare i innsjøstranden (<code>lake_shore</code>).</td></tr>
+    <tr data-s="extra"><td class="name">stretch_id</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">Én strekning i elvenettet: <code>{elvID}_{strekningLnr}</code>. Enheten for ruting og eierskap. Leveres bare i buffer10, lake_buffer10 og single_trees.</td></tr>
+    <tr data-s="extra"><td class="name">elvenavn · vassdragsnummer</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">Uendret fra NVEs elvenett. 10 m og innsjøstrand.</td></tr>
+    <tr data-s="extra"><td class="name">elvID · objektType · elveordenStrahler</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">Uendret fra elvenettet. <code>elvID</code> (f.eks. <code>010-11-1</code>) er elve-id bare for et segment uten <code>vannforekomstid</code>; <code>objektType</code> skiller ElvBekk fra InnsjøMidtlinje (midtlinjer i innsjøer) og ElvelinjeFiktiv (koblinger).</td></tr>
+    <tr data-s="extra"><td class="name">K_S_Kilde</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · stages / lakes</td><td class="meta">—</td><td class="expl"><code>Elv</code> for et elvesegment, <code>Innsjø</code> for et strandsegment. 10 m og innsjøstrand. Tas ut av 10 m (konstant); leveres bare i innsjøstranden (<code>lake_shore</code>).</td></tr>
+    <tr data-s="extra"><td class="name">routed</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">Om strekningen fant en rute gjennom kartlagt vann. En strekning uten rute får likevel segmentrader, med tomme attributter (<code>Matched</code> = no); et ekte vassdrag kan likevel få reservesoner (under).</td></tr>
+    <tr data-s="extra"><td class="name">fallback</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>geometry</b> · elvis</td><td class="meta">—</td><td class="expl">Sann der segmentets soner er bygd på selve elvenettlinjen, med et antatt løp 1 m til hver side, fordi rutingen ikke ga sone på begge bredder: en bekk grunnkart aldri har tegnet, eller en rute som er <em>fanget</em> av et nabovassdrag (≥ 50 m på en annen rutes vann, med den strekningens linje nærmere enn sin egen; segmentets krav forkastes, så <code>bekk_bredde</code> blir tom). Gjelder bare ElvBekk / ElvBekkMidtlinje; ekte vann trekkes fra, så ingenting legges inn i en innsjø. Teller som <code>Beregnet</code>; <code>K_S_Usikkerhet</code> = Ja.</td></tr>
+    <tr data-s="extra"><td class="name">vannforekomstid</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · stages</td><td class="meta">—</td><td class="expl">Vann-Nett-id for elvevannforekomsten (f.eks. <code>073-75-R</code>) som segmentets 1 m-buffer berører; den første i filrekkefølge ved flere, tom ved ingen (mest midtlinjer i innsjøer). Blir <code>river_id_vann-nett</code> og er enheten blokkene kuttes innenfor. I den nasjonale sammenslåingen erstattes den med linjen segmentet har lengst overlapp med (innen 1 m) i Vann-Nett-filen fra 2026-10-26.</td></tr>
+    <tr data-s="extra"><td class="name">segment_id_vann-nett · river_id_vann-nett · vannforekomstnavn · segment_length_vann-nett</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · stages</td><td class="meta">—</td><td class="expl">Leveransenavnene på 10 m-laget. <code>segment_id_vann-nett</code> = <code>segment_id</code>. Elve-id = <code>vannforekomstid</code>, ellers <code>elvID</code>; lengde = geometriens lengde. <code>vannforekomstnavn</code> er Vann-Netts navn på vannforekomsten, med ELVIS-<code>elvenavn</code> der Vann-Nett ikke har navn. <code>river_id_vann-nett</code> og <code>vannforekomstnavn</code> følger også med på blokknivåene.</td></tr>
+    <tr data-s="extra"><td class="name">Matched · Beregnet</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>aggregation</b> · stages</td><td class="meta">—</td><td class="expl"><code>Matched</code> = routed. <code>Beregnet</code> = routed eller fallback, med sone (<code>Atot_m2</code> &gt; 0) på hver bredd som ligger i Norge, og minst én slik bredd. Der Beregnet = no, settes Kantvegetasjon_A til Uklassifisert i alle bånd.</td></tr>
+    <tr data-s="extra"><td class="name">chain_id · chain_pos</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>derived</b> · graph</td><td class="meta">—</td><td class="expl">Rekkefølge med strømmen, for blokkaggregeringen. En kjede er strekninger i samme vannforekomst (elvID der den mangler) som renner <em>entydig</em> fra den ene til den neste; den brytes ved hvert samløp og hver forgreining. Blokkene på 100 / 500 / 1000 m kuttes innenfor en kjede i <code>chain_pos</code>-rekkefølge, så en blokk alltid er sammenhengende vann (elvenettets <code>strekningLnr</code> er ikke romlig rekkefølge).</td></tr>
+
+    <tr class="theme"><td colspan="5">Vegetasjon — trekroner fra CHM 1 m (watershed-segmentering, σ = 1,0, median 3, minstehøyde 0,5 m)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_V0p5-1 · V1-5 · V5-10 · V10pluss</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · vegetation</td><td class="meta">B</td><td class="expl">Prosent av breddens 0–10 m-kantsone dekket av kroner med topphøyde i klassen (0,5–1, 1–5, 5–10, ≥ 10 m). De samme fire beregnes også for 0–20 m (ikke registrert).<span class="f">areal(kroner i klassen ∩ sone) / Atot_m2 × 100</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B{0-3,0-10,0-20}_Vtot</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · vegetation</td><td class="meta">AB</td><td class="expl">Prosent dekning av kroner ≥ 1 m (de tre øvre klassene summert), i tre bånd. Levert: B0-10 og B0-20 på 10 m (innsjøstrand: bare L); B0-10 per bredd i buffer10 som <code>K_B0-10_Vtot</code>.<span class="f">Vtot = V1-5 + V5-10 + V10pluss   (som arealandel av sonen)</span></td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B0-10_Vtot_m2 · K_{L,R}_B{0-3,0-10,0-20}_Atot_m2</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · vegetation</td><td class="meta">AB</td><td class="expl">Dekket areal og selve sonearealet, m². <code>Atot_m2</code> er nevneren for hver prosent i det båndet og på den bredden, og vekten når årsaken klassifiseres på blokknivå.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Vp95 · Vhmed</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · canopy</td><td class="meta">B</td><td class="expl">Pikselbasert statistikk i sonen, bare CHM-piksler &gt; 1 m: 95-persentilen og medianhøyden. <code>Vhmed</code> bestemmer skyggerekkevidden.</td></tr>
+    <tr data-s="miss"><td class="name">K_{L,R}_B0-10_Vstdev</td><td><span class="pill miss">mangler</span></td><td class="meta">— · vegetation</td><td class="meta">B</td><td class="expl">Standardavvik for vegetasjonshøyde &gt; 1 m. Registrert, men ikke beregnet; ingen formel bruker den.</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B{0-10,0-20}_Bygg · Samferdsel</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · vegetation</td><td class="meta">B</td><td class="expl">Prosent av sonen under FKB-bygningsflater (Bygning + BygnAnlegg) og under grunnkart <code>Samferdsel</code>. Menneskelige årsaker i årsaksklassifiseringen.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_Bredde · K_{L,R}_w_h</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · width</td><td class="meta">B</td><td class="expl">Arealekvivalent bredde: 20 m ganger andelen av 0–20 m-båndet som har kroner, så den går fra 0 til 20 m uten trinn, og en stripe som står et stykke fra vannet får en bredde. Bredde er klassen. Levert: <code>Bredde</code> på 10 m (innsjøstrand: bare L).<span class="f">w_h = 20 · Vtot(0-20) / 100
+Bredde: w_h &lt; 1,5 → manglende, &lt; 6,5 → smale, &lt; 15 → moderat, ellers bred</span>En bredd merket Utenfor_Norge, og en bredd uten 0–10 m-sone, blir tom, så den aldri bestemmer underskuddet, og gjennomsnitt over to bredder hopper over den i stedet for å telle 0.<span class="dev">erstatter regnearkets fire trinn (0, 3, 10, 20 m); rapporten ber om en bredde uten faste sonegrenser (kapittel 3.1). Klassegrensene er midtpunktene mellom de gamle trinnene.</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_w_eff</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · width</td><td class="meta">B</td><td class="expl">Effektiv (helningskorrigert) bredde på den vegeterte stripen.<span class="f">w_eff = w_h / cos(arctan(s / 100))</span></td></tr>
+    <tr data-s="ok"><td class="name">E_{L,R}_B{0-10,0-20}_Potensiell_Kantvegetasjon · E_{L,R}_Potensiell_Kantvegetasjon</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · system_a</td><td class="meta">A</td><td class="expl">Kan det vokse vegetasjon her? Ja / Nei, beregnet i begge bånd; den båndfrie kolonnen er båndet <code>K_S_beregningsbredde</code> velger, som er 0–10 m overalt. Levert: den båndfrie på 10 m (innsjøstrand: bare L) og per bredd i buffer10.<span class="f">Ja  hvis PotVeg ≥ 50 %  eller  Vtot(bånd) ≥ VtotThreshold</span>PotVeg = grunnkart <code>okosystemtypeniva1</code> i {skog, dyrketmark, grasmark}, uten skog på impediment. Tom på en bredd merket Utenfor_Norge.<span class="dev">regnearket definerer PotVeg på de gamle arealdekkeklassene (Skog + Jordbruk + Snaumark på jorddekt); den masken finnes fortsatt som <code>SkogJordbruk</code>.</span> Den gamle ja/nei-regelen: tas ut av 10 m, buffer10 og lake_buffer10; leveres bare i innsjøstranden (<code>lake_shore</code>).</td></tr>
+    <tr data-s="ok"><td class="name">E_{L,R}_B{0-10,0-20}_Kantvegetasjon_A · E_{L,R}_Kantvegetasjon_A</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · system_a</td><td class="meta">A</td><td class="expl">Status per bredd, fem klasser; den båndfrie kolonnen er båndet <code>beregningsbredde</code> velger. Per bredd leveres den bare i buffer10 (<code>E_Kantvegetasjon_A</code>).<span class="f">Vtot ≥ VtotThreshold                        → Naturlig kantskog (vegetasjon)
+ellers Potensiell = Ja, jordbruk ≥ bebygd   → Kantskog fjernet
+ellers Potensiell = Ja                      → Nedbygd kantsone
+ellers                                      → Naturlig fravær av kantskog
+Beregnet = no (settes i aggregation)        → Uklassifisert</span>VtotThreshold (<code>K_{L,R}_B{0-10,0-20}_VtotThreshold</code>, ikke registrert) er 50 % normalt og 30 % der sonens dominerende klasse er skog på lavere enn middels/høy bonitet, eller heiBuskmark / liteVegetertMark / vatmark; i 0–20 m skaleres den med 0,75 fordi et bredere bånd tynner ut samme dekning. Jordbruk = Jordbruk + Skogbruk, bebygd = Bygg + Samferdsel + Konstruert. Tom verdi regnes som under terskelen, så en bredd uten sone havner i Naturlig fravær til Uklassifisert overstyrer; en bredd merket Utenfor_Norge blir tom.<span class="dev">30 %-regelen for bonitet/klasse og skaleringen 0,75 i bredt bånd står ikke i regnearket.</span></td></tr>
+    <tr data-s="ok"><td class="name">E_S_B{0-10,0-20}_Kantvegetasjon_A · E_S_Kantvegetasjon_A</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · system_a</td><td class="meta">A</td><td class="expl">Begge bredder samlet; den båndfrie kolonnen leveres på 10 m og er det aggregeringen leser. Naturlig kantskog bare når hver bredd med data er det; Naturlig fravær når én av dem er det; ellers de negative klassene, «Kantskog fjernet, Nedbygd kantsone» når breddene er ulike. En tom bredd (Utenfor_Norge) stemmer ikke.</td></tr>
+    <tr data-s="extra"><td class="name">E_{L,R,S}_B{0-10,0-20}_Kantvegetasjon_A_arsak · E_{L,R,S}_Kantvegetasjon_A_arsak</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · system_a / kantveg</td><td class="meta">A</td><td class="expl">Hvorfor vegetasjonen mangler: innenfor gruppen som bestemte statusen — bebygd: Bygg, Samferdsel, Konstruert; jordbruk: Jordbruk, Skogbruk; naturlig (Naturlig fravær): SnaumarkFastfjell, Vatmark, Snoisbre — kandidaten med størst dekning, med eventuelle årsaker i samme gruppe innen 10 prosentpoeng lagt til («Jordbruk/Skogbruk»). Tom for Naturlig kantskog og Uklassifisert. <code>S</code> slår sammen de to breddenes. Levert: S på 10 m; L, R og S på alle blokknivåer (ikke innsjø), der den beregnes på nytt fra summerte arealer; per bredd i buffer10.</td></tr>
+    <tr data-s="extra"><td class="name">E_{L,R,S}_B{0-10,0-20}_Menneskelig_inngrep · E_{L,R,S}_Menneskelig_inngrep</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · system_a / kantveg</td><td class="meta">A</td><td class="expl">Skyldes manglende vegetasjon mennesker? <code>Ja</code> for Kantskog fjernet / Nedbygd kantsone med en navngitt årsak, <code>Nei</code> for Naturlig fravær med en årsak, <code>N/A</code> der vegetasjonen er i orden, ellers tom. <code>S</code> gir <code>Ja/Nei</code> når breddene er uenige. Levert: S på 10 m; L, R og S på blokknivåene.</td></tr>
+
+    <tr class="theme"><td colspan="5">Kantvegetasjon gradert — hvor mye av forventet dekning som mangler</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B0-10_Forventet_dekning · K_{L,R}_B0-10_Vegdyktig</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">A</td><td class="expl"><code>Forventet_dekning</code>: kronedekningen bredden ville hatt i referansetilstanden, arealvektet over sonen: skog svært høy / høy / middels / lav / impediment bonitet 95 / 90 / 85 / 75 / 45 %, dyrket mark 95, bebygd 90 (transport 85), grasmark 90, annet 0. <code>Vegdyktig</code>: prosent av sonen i klassene som kan ha kantskog (alle unntatt impediment). Begge er andeler av samme areal som Vtot. Levert: Forventet_dekning på 10 m (innsjøstrand: bare L).</td></tr>
+    <tr data-s="extra"><td class="name">E_{L,R,S}_Kantvegetasjon_fjernet</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · kantveg_grad</td><td class="meta">A</td><td class="expl">Prosent av forventet dekning som er borte, per bredd og samlet. En bredd vurderes når Vegdyktig ≥ 50 % eller Vtot ≥ forventet. <code>S</code> veier breddene halvt hver; en bredd som ikke vurderes teller 0, og en bredd som ikke finnes (innsjøstrand, utenlandsk bredd) gir den andre full vekt. Tom når ingen bredd er vurdert. Levert: L, R, S på 10 m (innsjøstrand: L og S); S i buffer10 og lake_buffer10.<span class="f">fjernet = max(0, (forventet − Vtot) / forventet) × 100</span></td></tr>
+    <tr data-s="extra"><td class="name">E_S_Kantvegetasjon_grad</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · kantveg_grad</td><td class="meta">A</td><td class="expl">Klassen <code>E_S_Kantvegetasjon_fjernet</code> gir: &lt; 5 % Svært god, 5–20 God, 20–50 Moderat, 50–80 Dårlig, ≥ 80 Svært dårlig. Ellers <code>Ikke vurdert</code>, <code>Ikke vurdert (bekkelukking)</code> eller <code>Ikke beregnet</code> (satt i aggregation). 10 m, innsjøstrand, buffer10, lake_buffer10.</td></tr>
+
+    <tr class="theme"><td colspan="5">Grunnkart — arealdekke (Arealregnskap lagt over sonene)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Arealbruk</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">B</td><td class="expl">Dominerende (største areal) økosystemklasse i 0–10 m-sonen, <code>okosystemtypeNiva1</code> oversatt til navnene formlene bruker: Skog, Dyrket mark, Grassmark, Hei og buskmark, Vatmark, Bebygd og opparbeidet areal, Lite vegetert mark, Kyststrender …, Ferskvann, Hav.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Treslag</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">B</td><td class="expl">Dominerende <code>treslag</code> i sonen (Gran, Furu, Lauv, Blandingsskog, Ikke_relevant …). Velger grener for løvkvalitet og filtrering.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-20_Areal · Areal_skog · Areal_myr · Areal_Aapen</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">B</td><td class="expl">Areal i m² av 0–20 m-sonen og av skog / myr / åpne deler (<code>okosystemtypeniva1</code>: skog = <code>skog</code>; myr = <code>vatmark</code>; Aapen = <code>heiBuskmark</code> + <code>grasmark</code> + <code>liteVegetertMark</code>). Grunnlag for lateral konnektivitet.</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B{0-10,0-20}_SkogJordbruk · _m2</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">A</td><td class="expl">Den opprinnelige masken for potensiell vegetasjon (Skog, Jordbruk*, Snaumark_uspesifisert på Jorddekt). Erstattet av <code>PotVeg</code> i klassifiseringen.</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B{0-10,0-20}_PotVeg · _m2 · K_{L,R}_B0-10_{Skog, Jordbruk, SnaumarkJorddekt} · _m2</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">A</td><td class="expl"><code>PotVeg</code>, referansetilstanden der vegetasjon kan vokse: prosent av sonen (og m²) med <code>okosystemtypeniva1</code> i {skog, dyrketmark, grasmark}, uten skog på impediment; i 0–10 og 0–20 m. Skog / Jordbruk / SnaumarkJorddekt er den eldre arealdekkeinndelingen (<code>SkogJordbruk</code> er summen), og masken som holdes utenfor Berg.</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B0-10_{Konstruert, Jordbruk, Skogbruk, SnaumarkFastfjell, Vatmark, Snoisbre, Berg, Myr, Vann} · _m2</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · landcover</td><td class="meta">A</td><td class="expl">Dekning per årsak, prosent av 0–10 m-sonen og m². Kandidatene i årsaksklassifiseringen er Konstruert (snaumark konstruert), Jordbruk, Skogbruk, SnaumarkFastfjell, Vatmark og Snoisbre; Berg, Myr og Vann er eldre naturlige kandidater som fortsatt beregnes (Berg = grunnforhold i {fjell i dagen, blokkmark, grunnlendt} eller skrinn/impediment snaumark på ukartlagt grunn, <em>uten</em> menneskelige klasser og PotVeg-grunn; Myr = myrklassene; Vann = ferskvann + hav).</td></tr>
+
+    <tr class="theme"><td colspan="5">DTM — terreng</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_s</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · terrain</td><td class="meta">B</td><td class="expl">Gjennomsnittlig helning i DTM 1 m innenfor 0–10 m-sonen, i prosent, med fortegn langs normalen på bredden (positiv = stiger bort fra vannet). Tom der det ikke finnes gyldige piksler.</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_B0-10_Slope_{mean,median}_{deg,pct}</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · terrain</td><td class="meta">B</td><td class="expl">Hele helningsstatistikken bak <code>s</code>, for kontroll; spesifikasjonen ber bare om <code>s</code>.</td></tr>
+    <tr data-s="extra"><td class="name">K_S_Laser_aar</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · laser_metadata</td><td class="meta">B</td><td class="expl">Skanneår (<code>AARSTALL</code>) for laserprosjektet i NHM_ProsjektDekning som dekker størst lengde av segmentet; tom når kilden ikke er satt opp. 10 m og innsjøstrand.</td></tr>
+
+    <tr class="theme"><td colspan="5">Elv — løpet</td></tr>
+    <tr data-s="ok"><td class="name">K_S_bekk_azimut</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">B</td><td class="expl">Retningen til 10 m-segmentet, grader med klokka fra nord, brettet til 0–180 (en strekning mot NØ og en mot SV står likt mot sola).<span class="f">azimut = arctan2(ΔE, ΔN) · 180/π  mod 180</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_bekk_bredde</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">B</td><td class="expl">Elvebredde i m: to ganger avstanden fra midtpunktet av segmentets <em>krav</em> (dets del av den rutede løpslinjen, som ligger i vannet) til nærmeste bredd av det kartlagte vannet. Tom der strekningen ikke ble rutet eller kravet ble forkastet som fanget. 10 m (ikke innsjøstrand).<span class="dev">regnearket sier «gjennomsnittlig bredde av segment»; dette er bredden ved kravets midtpunkt.</span></td></tr>
+    <tr data-s="extra"><td class="name">K_S_bekk_bredde_stretch</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">B</td><td class="expl">Median <code>bekk_bredde</code> over strekningen.</td></tr>
+    <tr data-s="extra"><td class="name">K_S_beregningsbredde</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">A</td><td class="expl">Båndet system A klassifiseres fra. Er 10 overalt: regelen som ga 20 for strekninger med median elvebredde ≥ 20 m er slått av (<code>ALWAYS_PRIMARY_BAND</code>). 10 m (ikke innsjøstrand). Leveres ikke (konstant).</td></tr>
+    <tr data-s="extra"><td class="name">K_S_avstand_beregning</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">B</td><td class="expl">Avstand i m fra segmentets midtpunkt til kravet sonene ble bygd fra. 10 m (ikke innsjøstrand).</td></tr>
+    <tr data-s="extra"><td class="name">K_S_Usikkerhet</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · channel</td><td class="meta">AB</td><td class="expl"><code>Ja</code> når <code>avstand_beregning</code> &gt; max(50 m, 2 × bekk_bredde) — sonene er trolig bygd på et annet vann — eller segmentet er fallback, eller det ikke har krav; ellers <code>Nei</code>. 10 m og innsjøstrand.</td></tr>
+    <tr data-s="extra"><td class="name">K_S_Rorlagt_mistanke</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · rorlagt</td><td class="meta">B</td><td class="expl">Mistanke om lukket bekk: <code>Ja</code> for ≥ 30 m sammenhengende segmenter i én strekning uten kartlagt vann innen 20 m fra elvenettlinjen, og med grunnkart jordbruk på 100 % av en 10 m-stripe på <em>begge</em> sider. Et kontrollflagg, ikke en påvisning. Holdes utenfor datadekningen. 10 m (ikke innsjøstrand).</td></tr>
+    <tr data-s="ok"><td class="name">K_S_orient_fakt</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · width</td><td class="meta">B</td><td class="expl">Orienteringsfaktor for skygge.<span class="f">orient_fakt = 0,7 + 0,3 · sin(bekk_azimut)</span></td></tr>
+
+    <tr class="theme"><td colspan="5">Landegrense — soner klippet til Norge (geometry/landegrense.py)</td></tr>
+    <tr data-s="extra"><td class="name">K_{L,R}_Utenfor_Norge</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>geometry</b> · landegrense</td><td class="meta">AB</td><td class="expl"><code>Ja</code> der breddens sone, klippet til Norges administrative omriss, beholdt under 10 % av arealet — den andre bredden av en grenseelv, som ingen norsk kilde kartlegger. Bredden får da ingen måling, og hver formel som slår to bredder sammen bruker bare den andre. En delvis utenlandsk bredd måles over den norske delen. Bare landegrensene klipper noe.</td></tr>
+    <tr data-s="extra"><td class="name">K_S_Grenseelv</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · landegrense</td><td class="meta">AB</td><td class="expl"><code>Ja</code> der en av breddene er Utenfor_Norge: segmentet er målt bare fra norsk side. 10 m (ikke innsjøstrand).</td></tr>
+
+    <tr class="theme"><td colspan="5">Flomvern · Forbygning · Barrier — NVE og SVV (dammer testet mot det rutede løpet)</td></tr>
+    <tr data-s="ok"><td class="name">E_{L,R}_Flomvern · E_S_Flomvern</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · infrastructure</td><td class="meta">A</td><td class="expl">Per bredd: <code>Ja</code> når NVE sikringstiltak <em>Flomsikring</em> (linje og punkt) berører 0–10 m-sonen, <code>Tilbaketrukket</code> når det bare ligger i ringen 10–20 m, ellers <code>Nei</code>. <code>S</code> er en score 0–1: Ja 0,5, Tilbaketrukket 0,25, Nei 0 per bredd, summert og skalert med 2 / (antall bredder), så et grensesegment også går 0–1. Levert: L, R, S på 10 m (innsjøstrand: L og S); <code>{nivå}_Flomvern</code> = lengdevektet snitt av S, og <code>_final</code>.</td></tr>
+    <tr data-s="ok"><td class="name">E_{L,R}_Forbygning · E_S_Forbygning</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · infrastructure</td><td class="meta">A</td><td class="expl">Per bredd: <code>Ja</code> når NVE <em>Erosjonssikring</em> (linje og punkt) eller Statens vegvesens plastring/erosjonssikring (flater og linjer) berører 0–20 m-sonen, ellers <code>Nei</code>. <code>S</code> = Ja 0,5 per bredd, summert og skalert med 2 / (antall bredder). Levert: S på 10 m; <code>{nivå}_Forbygning</code> = lengdevektet snitt av S, og <code>_final</code>.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Barrier</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes</b> · infrastructure</td><td class="meta">A</td><td class="expl">Ja / Nei: en NVE-dam i drift (<code>status = D</code>; nedlagte og planlagte dammer tas ikke med) krysser segmentets løp — en damlinje innen 10 m eller et dampunkt innen 15 m fra segmentets <em>krav</em> (elvenettlinjen der strekningen ikke ble rutet). Én dam gir ett segment: punkt og linje for samme dam slås sammen på <code>damNr</code>, så det aggregerte tallet er et antall dammer. 10 m og innsjøstrand (som arver fra innsjøens midtlinje).</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Oppstuving</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · barriers</td><td class="meta">A</td><td class="expl">Oppstuving ovenfor en barriere. Referansebredde = snitt av <code>bekk_bredde</code> over 200 m <em>nedstrøms</em> barrieren; oppstrøms er et segment oppstuvet så lenge <code>bekk_bredde / referanse ≥ 1,5</code>, med opptil 2 segmenter under forholdet tillatt. Ja / Nei. Beregnes og aggregeres i <code>aggregation/</code>, men leveres ikke.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Fragmentering</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · barriers</td><td class="meta">A</td><td class="expl">Avstand langs nettet, <em>oppstrøms</em> fra segmentet, til nærmeste barriere — et segment nedenfor en dam er det fragmenterte. Klasser: ingen → Svært god; &gt; 50 km God; 10–50 km Moderat; 2–10 km Dårlig; &lt; 2 km Svært dårlig. Levert på 10 m og innsjøstrand; blokknivåene (verste klasse) leveres ikke.</td></tr>
+
+    <tr class="theme"><td colspan="5">Grøfter — predikerte myrgrøfter (…_pred_skeletonized, type = ditch)</td></tr>
+    <tr data-s="ok"><td class="name">GK_B0-10_groft_azimut · GK_B0-10_orient_groft</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · grofter</td><td class="meta">B</td><td class="expl">Gjennomsnittlig retning (0–180) for grøftene som møter 0–10 m-sonen, og orienteringsfaktoren <code>0,7 + 0,3 · sin(azimut)</code>. Tom der ingen grøft berører segmentet.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_Grofte_tetthet</td><td><span class="pill ok">ok</span></td><td class="meta"><b>attributes</b> · grofter</td><td class="meta">B</td><td class="expl">Antall grøfter i breddens 0–10 m-sone med retning minst 45° fra elvas — de som krysser bredden i stedet for å gå langs den.<span class="dev">regnearket sammenligner de to orienterings<em>faktorene</em> (0,4–1,0) med 45, som aldri kan slå til; terskelen brukes på retningene.</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Grofte_bypass</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Reduksjonsfaktor for grøfter som leder vann forbi bufferen, 0–1.<span class="f">bypass = max(0, 1 − ln(1 + tetthet) / ln 11)</span><span class="dev">regnearket skriver «lm» for ln.</span></td></tr>
+
+    <tr class="theme"><td colspan="5">Filtrering — renseeffekt (system B)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_v_faktor_SS · v_faktor_NP</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Faktorer for vegetasjonstype, for partikler (SS) og næringsstoffer (NP). Bredden klasses én gang: <em>høy</em> når det er kroner i 0–10 m-sonen og (V5-10 + V10pluss) ≥ (V1-5 + V0p5-1), delt på Treslag (høy vegetasjon uten treslag er Lauv, rapportens tabell C.1); <em>lav</em> når lav vegetasjon dominerer; ellers etter Arealbruk; ellers ingen. Uten kroner i 0–10 m, men med kroner i 0–20 m, avgjør høydeklassene i 0–20 m.<span class="f">               SS    NP
+høy, Lauv     1,00  1,00
+høy, annet    0,95  0,85   (Blandingsskog → annet)
+lav           0,85  0,70
+Grassmark     0,75  0,50
+Hei/buskmark  0,60  0,35
+ingen         0     0</span><span class="dev">regnearkets rad for v_faktor_NP er en kopi av v_faktor_SS; verdiene er lest fra den tiltenkte kolonnen.</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_N_sub</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Faktor for nitrogen under bakken etter Arealbruk: Vatmark / Kyststrender 0,80, Skog 0,65, Hei og buskmark 0,55, Grassmark 0,50, Dyrket mark 0,30, Bebygd / Lite vegetert 0,20, ellers 0. En bredd med sone, men uten lest arealbruk, regnes som Dyrket mark (rapportens forsiktige standard, tabell C.1); en bredd som ikke finnes eller ikke har sone, blir tom.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_H_SS · H_PN</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Helningsfaktorer, med knekk ved 10 % helning.<span class="f">H_SS = (71,02 + 2,49·s) / 100                       s ≤ 10
+H_SS = max(0, (134,09 − 3,86·s + 2,49·s) / 100)     s &gt; 10
+H_PN = 1                                            s ≤ 10
+H_PN = max(0, 1 − 0,3 · (s − 10) / 10)              s &gt; 10</span><span class="dev">regnearkets rader har en løs IFELSE og en ubalansert parentes; dette er strukturen de antyder.</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Y_SS · Y_X · Y_N · Y_P</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Renseeffekt i %, som flater ut med effektiv bredde.<span class="f">Y_SS = 90,9 · v_faktor_SS · (1 − e^(−0,446·w_eff))
+Y_X  = 93,2 ·               (1 − e^(−0,215·w_eff))     plantevernmidler, uten v_faktor
+Y_N  = 92,0 · v_faktor_NP · (1 − e^(−0,160·w_eff))
+Y_P  = 89,5 · v_faktor_NP · (1 − e^(−0,250·w_eff))</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Y_N_total</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Nitrogenrensing på og under bakken.<span class="f">Y_N_total = 0,4 · Y_N + 0,6 · N_sub · 100</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Y_SS_final · Y_P_final · Y_N_final · Y_N_total_final</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · filtrering</td><td class="meta">B</td><td class="expl">Helningskorrigert renseeffekt.<span class="f">Y_SS_final = Y_SS · H_SS      Y_P_final = Y_P · H_PN      Y_N_final = Y_N · H_PN
+Y_N_total_final = 0,4 · Y_N_final + 0,6 · N_sub · 100</span>Y_N_total_final er Y_N_total (rapporten A.2) med helningsfaktoren på overflateleddet; Filter_score bruker den, så N_sub teller med.</td></tr>
+
+    <tr class="theme"><td colspan="5">Temperatur — skygge (system B)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_rekk</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · temperatur</td><td class="meta">B</td><td class="expl">Hvor langt breddens vegetasjon kaster skygge, m.<span class="f">rekk = Vhmed · tan(37°) · orient_fakt</span></td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Lauv_faktor_temp</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · temperatur</td><td class="meta">B</td><td class="expl">1,0 der høy vegetasjon dominerer (Vtot ≥ 50 og høy ≥ lav), 0,7 der lav vegetasjon dominerer og det er dekning, ellers 0.</td></tr>
+    <tr data-s="ok"><td class="name">K_S_B0-10_Skygge_effekt</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · temperatur</td><td class="meta">B</td><td class="expl">Andelen av løpet de to breddenes skygge når, høyst 1.<span class="f">Skygge_effekt = min(1, (rekk_L + rekk_R) · 2/antall_bredder / min(bekk_bredde, 20))</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_B0-10_Temp_score</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · temperatur</td><td class="meta">B</td><td class="expl"><span class="f">Temp_score = min(1, max(Vp95_L, Vp95_R) / 15) · snitt(Lauv_faktor_L, Lauv_faktor_R) · Skygge_effekt</span></td></tr>
+
+    <tr class="theme"><td colspan="5">Næring — tilførsel av løv (system B)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Loev_kvalitet</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · naering</td><td class="meta">B</td><td class="expl">Løvkvalitet etter samme vegetasjonssituasjon som filtreringen: høy Lauv 1,00, høy Blandingsskog 0,65, høy annet 0,25, lav vegetasjon 0,40, ingen 0.</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Naering_score · Naering_effekt</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · naering</td><td class="meta">B</td><td class="expl"><span class="f">Naering_score  = (Vtot / 100) · Loev_kvalitet
+Naering_effekt = Naering_score · min(1, 20 / min(bekk_bredde, 20))</span></td></tr>
+
+    <tr class="theme"><td colspan="5">Kontinuitet — sammenheng langs bredden (system B)</td></tr>
+    <tr data-s="ok"><td class="name">K_{L,R}_B0-10_Kontin_tre · Kontin_busk · Kontin</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · kontinuitet</td><td class="meta">B</td><td class="expl"><span class="f">Kontin_tre  = (V5-10 + V10pluss) / 100
+Kontin_busk = (V0p5-1 + V1-5) / 100
+Kontin      = 0,7 · Kontin_tre + 0,3 · Kontin_busk</span><span class="dev">regnearket oppgir K_R_B0-10_Loev_kvalitet som kolonnen for høyre side; beregnet likt for begge sider.</span></td></tr>
+
+    <tr class="theme"><td colspan="5">Scorer — system B per segment (gjennomsnitt over to bredder hopper over en bredd merket Utenfor_Norge)</td></tr>
+    <tr data-s="ok"><td class="name">E_S_usikkerhet_flagg</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · usikkerhet</td><td class="meta">B</td><td class="expl">Heltall (bitmaske) for standardverdiene et segments scorer bygger på (rapportens tabell C.2); 0 betyr ingen. 10 m og innsjøstrand; summeres ikke opp.<span class="f">2  arealbruk mangler, åker brukt (en bredd med sone, men uten lest arealbruk)
+4  løv/bar mangler, løv brukt (høy vegetasjon uten treslag)</span>De andre bitene i tabell C.2 settes aldri: K_score, CHM-høyde, retning og kontinuitet beregnes i stedet for å få standardverdi, manglende helning leses som 0 % (rapporten: 5 %), og manglende grøftekart leses som ingen grøfter uten at det flagges.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Filter_score</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl">Vektet snitt av de fire renseeffektene, hver som snitt over begge bredder, skalert til 0–1.<span class="f">(0,25·Y_SS_final + 0,35·Y_P_final + 0,25·Y_N_total_final + 0,15·Y_X) / 100</span><span class="dev">regnearket tar SS og N fra venstre bredd og P fra høyre; her er hver av dem snittet av begge.</span></td></tr>
+    <tr data-s="ok"><td class="name">E_S_Filter_score_naering</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl"><span class="f">Filter_score · (0,8 + 0,2 · snitt(Naering_effekt_L, Naering_effekt_R))</span></td></tr>
+    <tr data-s="ok"><td class="name">E_S_Filter_score_final</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl"><span class="f">Filter_score_naering · snitt(Grofte_bypass_L, Grofte_bypass_R)</span>Lik Filter_score_naering der ingen grøfter krysser. 10 m, innsjøstrand, alle nivåer.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Struktur_score</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl"><span class="f">0,5 · Temp_score + 0,5 · snitt(Naering_effekt_L, Naering_effekt_R)</span>10 m og elvenivåene; ikke på innsjø (avhenger av elvebredden).</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Kontinuitet</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl"><span class="f">0,7 · snitt(Kontin_tre_L, Kontin_tre_R) + 0,3 · snitt(Kontin_busk_L, Kontin_busk_R)</span>10 m, innsjøstrand, alle nivåer.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_Score_total</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · scores</td><td class="meta">B</td><td class="expl"><span class="f">0,5 · Filter_score_final + 0,3 · Struktur_score + 0,2 · Kontinuitet</span>10 m, innsjøstrand, alle nivåer (snitt per enhet); <code>_final</code> gir den som grad 1–5 (under).</td></tr>
+
+    <tr class="theme"><td colspan="5">Konnektivitet — nettverk (bygd på segmentene; retning = elvenettets digitaliseringsretning)</td></tr>
+    <tr data-s="ok"><td class="name">K_S_K_lateral<small>regnearket kaller den K_S_K_score</small></td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · connectivity</td><td class="meta">B</td><td class="expl">Andelen av 0–20 m-sonen som er naturlik, begge bredder samlet.<span class="f">(Σ Areal_skog + Areal_myr + Areal_Aapen over L,R) / (Areal_L + Areal_R)</span><span class="dev">regnearkets egenskap heter K_S_K_score, men delnavnet er K_lateral; formelen gjentar K_L_ for leddene på høyre side.</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_K_oppstroems</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · connectivity</td><td class="meta">B</td><td class="expl">Avstandsvektet snitt av Score_total i nettet oppstrøms, innen 10 km (lenger unna er vekten &lt; 2 %).<span class="f">(1/N) · Σ_oppstrøms Score_total_i · e^(−d_i / 2500)</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_K_nettverk</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · connectivity</td><td class="meta">B</td><td class="expl">Avstandsvektet snitt av Score_total over alle segmenter innen 5 km, uansett strømretning.<span class="f">(1/M) · Σ_{d_j &lt; 5 km} Score_total_j · e^(−d_j / 2500)</span></td></tr>
+    <tr data-s="ok"><td class="name">E_S_K_score · E_S_f_konnektivitet</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · connectivity / priority</td><td class="meta">B</td><td class="expl"><span class="f">K_score         = (K_oppstroems + K_lateral + K_nettverk) / 3
+f_konnektivitet = 1,3 − 0,3 · K_score</span>Levert: <code>E_S_K_score</code> på 10 m og innsjøstrand.</td></tr>
+
+    <tr class="theme"><td colspan="5">Prioritet — prioritering av restaurering (system B)</td></tr>
+    <tr data-s="ok"><td class="name">E_S_f_arealbruk</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Faktor for arealpress fra dominerende Arealbruk på de to breddene (den høyeste vinner): Dyrket mark 1,40, Bebygd og opparbeidet areal 1,30, Grassmark 1,20, Skog 0,90, Hei og buskmark 0,80, Vatmark 0,80 (tabell 11), annet 1,00 (en bredd uten lest arealbruk regnes som Dyrket mark, som for N_sub). En bredd merket Utenfor_Norge vinner aldri.</td></tr>
+    <tr data-s="ok"><td class="name">E_S_f_helning</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl"><span class="f">f_helning = 1 / cos(arctan(min(snitt(s_L, s_R), 30) / 100))</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_w_basis · K_S_w_opt</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Bufferbredden segmentet burde ha.<span class="f">w_basis = klipp(10 + 1,5 · bekk_bredde, 10, 50)
+w_opt   = w_basis · f_helning · f_arealbruk · f_konnektivitet</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_gap_rel</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Relativt underskudd mot den smaleste breddens faktiske bredde.<span class="f">gap_rel = max(0, (w_opt − min(w_h_L, w_h_R)) / w_opt)</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_fremmedart_risiko</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Press fra fremmede arter, fra Artsdatabankens funn av parkslirekne, kjempespringfrø og vasspest. Et funn hører til et segment når det ligger innen 25 m fra segmentets kantsone (funn merket feil/usikre, eller med oppgitt usikkerhet &gt; 50 m, tas ikke med). 10 m og innsjøstrand.<span class="f">0,8                          funn i segmentet
+0,8 · e^(−d / 5 km)          nærmeste funn d oppstrøms (søkt til 25 km)
+0                            ingen</span></td></tr>
+    <tr data-s="ok"><td class="name">K_S_d</td><td><span class="pill ok">ok</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Avstand i m langs nettet til nærmeste funn oppstrøms: 0 i segmentet, tom når ingen innen 25 km.</td></tr>
+    <tr data-s="extra"><td class="name">K_S_fremmedart_art</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl">Artene funnet i segmentets egen kantsone (norske navn, kommaseparert); tom ellers. 10 m og innsjøstrand.</td></tr>
+    <tr data-s="ok"><td class="name">K_S_prioritet</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>derived</b> · priority</td><td class="meta">B</td><td class="expl"><span class="f">prioritet = gap_rel · f_arealbruk · (0,2 + 0,8 · (1 − K_score)) · (1 − Score_total)</span>10 m og innsjøstrand.</td></tr>
+
+    <tr class="theme"><td colspan="5">Aggregering — 100 m → 500 m → 1000 m → elv → region, og innsjø ({nivå} = 100m, 500m, 1000m, river, region, vannomraade eller innsjo)</td></tr>
+    <tr data-s="extra"><td class="name">aggr_segment_id_vann-nett_{nivå} · aggr_segment_length_vann-nett_{nivå}</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate</td><td class="meta">—</td><td class="expl">Løpenummer og lengde for enheten. Nummeret starter på nytt i hvert område, så i den nasjonale leveransen er det unikt bare sammen med <code>region_folder</code>. Elv, region og vannområde har i tillegg henholdsvis <code>river_id_vann-nett</code>, <code>region_id</code> + <code>n_rivers</code> og <code>eUVannomradeId</code> + <code>vannomradeId</code> + <code>vannomradenavn</code> + <code>n_rivers</code>.</td></tr>
+    <tr data-s="ok"><td class="name">{nivå}_Kantvegetasjon · {nivå}_Kantvegetasjon_final · {nivå}_datadekning</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate / scales</td><td class="meta">A</td><td class="expl">Kantvegetasjon = lengdevektet snitt av <code>E_S_Kantvegetasjon_fjernet</code> over vurderte segmenter, 0–1. Datadekning = beregnet lengde / lengde, lukket bekk holdt utenfor begge. <code>_final</code> er grad 1–5 (under), tom når datadekningen er under 50 %. Alle nivåer og innsjø.</td></tr>
+    <tr data-s="ok"><td class="name">{nivå}_Kantvegetasjon_janei · {nivå}_Kantskog_fjernet · {nivå}_Nedbygd_kantsone · {nivå}_ikke_mulig_Kantvegetasjon · {nivå}_Uklassifisert · frac_matched_{nivå} · length_uklassifisert_{nivå}</td><td><span class="pill ok">ok</span></td><td class="meta"><b>aggregation</b> · aggregate</td><td class="meta">A</td><td class="expl">Lengdevektede andeler av klassene i <code>E_S_Kantvegetasjon_A</code> (segmentene er ikke nøyaktig 10 m, så lengder, ikke antall). <code>_janei</code> er den tidligere ja/nei-lesningen, beholdt til sammenligning; den offisielle verdien er den graderte over.<span class="f">Kantvegetasjon_janei       = (L_fjernet + L_nedbygd) / (L_ok + L_fjernet + L_nedbygd)
+Kantskog_fjernet           = L_fjernet / (samme)      Nedbygd_kantsone = L_nedbygd / (samme)
+ikke_mulig_Kantvegetasjon  = L_ikke / L_matched
+Uklassifisert              = L_uklassifisert / L_enhet   frac_matched = L_matched / L_enhet</span>Alle nivåer og innsjø (<code>length_uklassifisert</code> ikke på innsjø). Leveres ikke: tilstanden leveres som <code>{nivå}_Kantvegetasjon</code> og <code>_final</code>, og dekningen som <code>{nivå}_datadekning</code>.</td></tr>
+    <tr data-s="ok"><td class="name">{nivå}_Flomvern · {nivå}_Forbygning · _final</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate / scales</td><td class="meta">A</td><td class="expl">Lengdevektet snitt av <code>E_S_Flomvern</code> / <code>E_S_Forbygning</code> (0–1) over beregnede segmenter. <code>_final</code>: andelen × 100 gir &lt; 5 → 5, 5–20 → 4, 20–50 → 3, 50–80 → 2, ≥ 80 → 1 (samme klasser som Kantvegetasjon_final). Alle nivåer og innsjø. Oppstuving aggregeres på samme måte i <code>aggregation/</code>, men leveres ikke.</td></tr>
+    <tr data-s="ok"><td class="name">{nivå}_Barrier · {nivå}_Barrier_final</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate / scales</td><td class="meta">A</td><td class="expl">Antall segmenter med barriere i enheten, og grad 1–5: ingen → 5, 1–2 → 3, 3 → 2, ≥ 4 → 1. Alle nivåer og innsjø.</td></tr>
+    <tr data-s="ok"><td class="name">{nivå}_Filter_score_final · Struktur_score · Kontinuitet · Score_total · Score_total_final</td><td><span class="pill ok">ok</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate / scales</td><td class="meta">B</td><td class="expl">Lengdevektede snitt av scorene i system B; <code>Score_total_final</code> er grad 1–5 av 100 × snittet (&lt; 20 → 1, 20–40 → 2, 40–60 → 3, 60–80 → 4, ≥ 80 → 5: Sállir tabell 8, 5 = Svært god), tom under 50 % datadekning. Alle nivåer; innsjø uten Struktur_score.<span class="dev">regnearket kaller disse {nivå}_Filter_score_B, _Struktur_score_B, _Kontinuitet_B, _Score_B og _Score_Final_B.</span></td></tr>
+    <tr data-s="extra"><td class="name">E_{L,R,S}_Kantvegetasjon_A_arsak · Menneskelig_inngrep (per enhet)</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · aggregate / kantveg</td><td class="meta">A</td><td class="expl">Beregnet på nytt per enhet fra summerte arealer (<code>sum_K_{L,R}_*_m2</code>): en prosent i enheten er Σareal / ΣAtot, så enheten klassifiseres med samme regel som segmentet. En bredd uten norsk lengde i enheten (<code>length_norsk_{L,R}</code> = 0) blir tom, og den samlede verdien bruker bare den andre. Alle nivåer unntatt innsjø.</td></tr>
+    <tr data-s="extra"><td class="name">length_matched · length_{ok,kantskog_fjernet,nedbygd_kantsone,ikke,uklassifisert} · length_norsk_{L,R} · n_10m_segments · n_matched · n_ok · n_mangl · n_ikke · sum_*</td><td><span class="pill extra">ekstra</span></td><td class="meta"><b>aggregation</b> · aggregate</td><td class="meta">—</td><td class="expl">Lengdene, antallene og summene alle andeler regnes på nytt fra på hvert nivå. Finnes i <code>aggregation/</code>, så nivåene kan kjedes og hver andel kontrolleres; leveres ikke (unntatt <code>length_uklassifisert_{nivå}</code>).</td></tr>
+    <tr data-s="miss"><td class="name">{nivå}_Score_Morfologi_A · Score_Kontinuitet_A · Score_Total_A</td><td><span class="pill miss">mangler</span></td><td class="meta">— · aggregate</td><td class="meta">A</td><td class="expl">Sammensatte scorer for system A fra regnearket: <code>Morfologi = (Forbygning·3 + Flomvern·3 + Kantvegetasjon·2) / 8</code>; <code>Kontinuitet = Oppstuving</code> (elv/region: snitt med Barrier); <code>Total</code> legger til Oppstuving·2 (og Barrier·2 på elvenivå). Ikke beregnet.</td></tr>
+
+    <tr class="theme"><td colspan="5">Innsjø — strandsegmenter (lake_shore) og én rad per innsjø (lake_polygon)</td></tr>
+    <tr data-s="extra"><td class="name">lake_id · lake_navn · lake_eu</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry</b> · lakes</td><td class="meta">—</td><td class="expl">Innsjøen i Vann-Nett: <code>identifikasjon_lokalId</code>, <code>navn</code> og <code>eUVannforekomstId</code>. <code>lake_id</code> og <code>lake_navn</code> også i lake_shore; <code>lake_id</code> i lake_buffer10. <code>lake_eu</code> er tom i Vann-Netts innsjøer og leveres ikke.</td></tr>
+    <tr data-s="extra"><td class="name">areal_vannflate_m2 · areal_vannforekomst_m2 · innsjo_strandlinje_m · innsjo_segmenter</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>geometry / aggregation</b> · lakes</td><td class="meta">—</td><td class="expl">Arealet av den kartlagte vannflaten og av Vann-Netts innsjøpolygon; lengden av strandlinjen som er målt og antall strandsegmenter. lake_polygon.</td></tr>
+    <tr data-s="extra"><td class="name">lake_shore: 10 m-feltene · area_m2</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>aggregation</b> · lakes / trim</td><td class="meta">AB</td><td class="expl">Et strandsegment har én bredd (L) og ingen elvebredde, så lake_shore har 10 m-feltene uten <code>K_R_*</code>/<code>E_R_*</code>, <code>K_S_bekk_bredde</code>, <code>K_S_beregningsbredde</code>, <code>K_S_avstand_beregning</code>, <code>E_S_Struktur_score</code>, <code>K_S_Grenseelv</code> og <code>K_S_Rorlagt_mistanke</code>. Geometrien er 0–20 m-sonen; <code>area_m2</code> er arealet av den.</td></tr>
+
+    <tr class="theme"><td colspan="5">Nasjonal sammenslåing — felt lagt til av scripts/merge_delivery.py</td></tr>
+    <tr data-s="extra"><td class="name">eUVannomradeId · region_folder</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>sammenslåing</b></td><td class="meta">—</td><td class="expl"><code>eUVannomradeId</code>: vannområdet som har størst del av objektet. <code>region_folder</code>: området raden kom fra; for vann som lå i to områder, områdene med reell lengde, lengst først. Alle lag.</td></tr>
+    <tr data-s="extra"><td class="name">buffer10 · lake_buffer10: side · area_m2 · K_B0-10_Vtot · E_Kantvegetasjon_A · E_Kantvegetasjon_A_arsak · E_S_Kantvegetasjon_fjernet · E_S_Kantvegetasjon_grad</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>sammenslåing</b></td><td class="meta">A</td><td class="expl">0–10 m-sonen som flate, én per segment og bredd (innsjø: én per strandsegment, side = L). Breddeverdiene er <code>K_{side}_…</code>/<code>E_{side}_…</code> for den bredden; de to <code>E_S_</code>-verdiene er kopiert fra segmentets rad, så sonene kan fargelegges uten kobling. Har også segment- og vannforekomstfeltene fra identitet.</td></tr>
+    <tr data-s="extra"><td class="name">single_trees: tree_id · max_height · mean_height · crown_area_m2 · height_class</td><td><span class="pill extra">ekstra</span> <span class="pill deliv">levert</span></td><td class="meta"><b>attributes / sammenslåing</b> · singletree</td><td class="meta">—</td><td class="expl">Trekronene fra <code>attributes</code> (bare med <code>KANTSONER_EXPORT_SINGLETREE</code>). Høyde i toppunktet og snitthøyde fra CHM, kroneareal før omrisset forenkles, høydeklasse 1-5, 5-10 eller 10pluss. En krone funnet i to områder beholdes én gang. <code>tree_id</code> er unik bare sammen med <code>region_folder</code>.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <p><strong>Slik leses status.</strong> «ok» betyr at produktspesifikasjonen (regnearket) navngir attributten og at pipelinen skriver den med data. «ekstra» er beregnet, men ikke i regnearket — mest mellomregningene prosentene bygger på, årsaksblokken og identitetskolonnene. En linje <code>spesifikasjon ≠ kode</code> viser hvor implementasjonen bevisst avviker fra regnearket.</p>
+    <p><strong>Mangler fortsatt:</strong> de tre sammensatte scorene for system A (<code>Score_Morfologi_A</code>, <code>Score_Kontinuitet_A</code>, <code>Score_Total_A</code>) og <code>Vstdev</code>, som ingenting bruker. <strong>Beregnet, men ikke registrert:</strong> høydeklassene, Bygg og Samferdsel i 0–20 m og <code>K_{L,R}_B{0-10,0-20}_VtotThreshold</code>.</p>
+  </div>
+
+  <footer>Bygd fra <code>src/kantsoner/spec/attributes.py</code>, modulene i <code>derived/</code> og <code>network/</code>, leveranselistene i <code>src/kantsoner/delivery/trim.py</code> og <code>scripts/merge_delivery.py</code>. Bånd: B0-3 / B0-10 / B0-20 m fra vannkanten.</footer>
+</div>
+
+<script>
+(function(){
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#t tbody tr[data-s]'));
+  var themes = Array.prototype.slice.call(document.querySelectorAll('#t tbody tr.theme'));
+  var counts = {ok:0, extra:0, stub:0, miss:0, deliv:0};
+  rows.forEach(function(r){ counts[r.dataset.s]++; if (r.querySelector('.pill.deliv')) counts.deliv++; });
+  var s = document.getElementById('summary');
+  [['ok','i spesifikasjonen','ok'],['extra','utover spesifikasjonen','extra'],['stub','plassholder','stub'],['miss','mangler','miss'],['deliv','levert','']].forEach(function(t){
+    var d = document.createElement('div'); d.className = 'tile ' + t[2];
+    d.innerHTML = '<div class="n">' + counts[t[0]] + '</div><div class="l">' + t[1] + '</div>';
+    s.appendChild(d);
+  });
+  var filter = 'all', q = '';
+  function apply(){
+    var ql = q.toLowerCase();
+    rows.forEach(function(r){
+      var okF = filter === 'all' || (filter === 'deliv' ? !!r.querySelector('.pill.deliv') : r.dataset.s === filter);
+      var okQ = !ql || r.textContent.toLowerCase().indexOf(ql) !== -1;
+      r.hidden = !(okF && okQ);
+    });
+    themes.forEach(function(t){
+      var n = t.nextElementSibling, any = false;
+      while (n && !n.classList.contains('theme')) { if (!n.hidden) { any = true; break; } n = n.nextElementSibling; }
+      t.hidden = !any;
+    });
+  }
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click', function(){
+      document.querySelectorAll('.chip').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      c.setAttribute('aria-pressed','true'); filter = c.dataset.f; apply();
+    });
+  });
+  document.getElementById('q').addEventListener('input', function(e){ q = e.target.value; apply(); });
+})();
+</script>

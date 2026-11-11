@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kantsoner"]
+
+[project]
+name = "kantsoner"
+version = "1.0.0"
+authors = [
+    {name = "Luis Barreiro", email = "luis.barreiro@fieldgeo.no"},
+    {name = "Martijn Vermeer", email = "martijn.vermeer@fieldgeo.no"},
+    {name = "Ourania Tsilomitrou", email = "ourania.tsilomitrou@fieldgeo.no"},
+]
+description = "Riparian zone (kantsone) morphology scoring from remote sensing"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1",
+    "geopandas>=1.0",
+    "pyogrio",
+    "pyproj",
+    "pydantic>=2.0",
+    "pyyaml",
+    "rasterio",
+    "rasterstats",
+    "scikit-image",
+    "scipy",
+    "loguru",
+    "tqdm",
+]
+
+[project.scripts]
+kantsoner = "kantsoner.cli:main"
+
+[dependency-groups]
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "scripts"]
+addopts = "--strict-markers --strict-config"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 80
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+ignore = ["E501"]  # handled by ruff format; avoids noise in docstrings/comments
+select = [
+  "E", "F",      # pycodestyle/pyflakes core
+  "W",           # whitespace warnings (safe alongside formatter)
+  "I",           # import sorting (isort-like)
+  "UP",          # pyupgrade-like modernization
+  "B",           # bugbear (common flake8 plugin replacement)
+  "C4",          # flake8-comprehensions
+  "PTH",         # flake8-use-pathlib
+  "T10",         # flake8-debugger (debugger statements)
+  "S",           # bandit-like security checks (tune/disable if noisy)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"__init__.py" = ["F401", "E402"]

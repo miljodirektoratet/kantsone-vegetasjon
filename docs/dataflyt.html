@@ -1,0 +1,683 @@
+<title>Kantsoner dataflyt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:    #F6F8F7;
+    --surface:  #FFFFFF;
+    --ink:      #0E1C1B;
+    --ink-soft: #4A5F5D;
+    --ink-faint:#7C8F8D;
+    --water:    #14625F;
+    --water-dim:#D3E5E3;
+    --land:     #A8791F;
+    --land-dim: #F0E4C9;
+    --rule:     #D9E2E0;
+    --shadow:   0 1px 2px rgba(14, 28, 27, .05), 0 8px 24px rgba(14, 28, 27, .05);
+
+    --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:    #0B1413;
+      --surface:  #12201F;
+      --ink:      #E8F0EE;
+      --ink-soft: #A2B5B2;
+      --ink-faint:#718785;
+      --water:    #5CBDB7;
+      --water-dim:#173634;
+      --land:     #D9AC4E;
+      --land-dim: #322816;
+      --rule:     #243634;
+      --shadow:   0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:    #0B1413;
+    --surface:  #12201F;
+    --ink:      #E8F0EE;
+    --ink-soft: #A2B5B2;
+    --ink-faint:#718785;
+    --water:    #5CBDB7;
+    --water-dim:#173634;
+    --land:     #D9AC4E;
+    --land-dim: #322816;
+    --rule:     #243634;
+    --shadow:   0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4.5rem) clamp(1.1rem, 4vw, 2.5rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .eyebrow {
+    font-family: var(--display);
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--water);
+    margin: 0 0 .7rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(2.1rem, 5.2vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -.022em;
+    text-wrap: balance;
+    margin: 0 0 .9rem;
+  }
+
+  .lede {
+    font-size: clamp(1.02rem, 2vw, 1.16rem);
+    color: var(--ink-soft);
+    max-width: 63ch;
+    margin: 0;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(1.28rem, 2.6vw, 1.6rem);
+    font-weight: 600;
+    letter-spacing: -.012em;
+    text-wrap: balance;
+    margin: 0 0 .5rem;
+  }
+
+  /* ── figure ─────────────────────────────────────────── */
+  figure { margin: 0; }
+  .scroller { overflow-x: auto; padding-bottom: .4rem; }
+  .scroller svg {
+    display: block;
+    min-width: 940px;
+    width: 100%;
+    height: auto;
+    color: var(--ink);
+  }
+  figcaption {
+    font-family: var(--display);
+    font-size: .87rem;
+    color: var(--ink-faint);
+    margin-top: 1rem;
+    max-width: 70ch;
+  }
+
+  /* ── stage rows ─────────────────────────────────────── */
+  .stages { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    border-left: 3px solid var(--water);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .stage-head {
+    padding: 1.15rem 1.4rem .95rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: .85rem;
+    flex-wrap: wrap;
+  }
+  .lnum {
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 500;
+    color: var(--water);
+    background: var(--water-dim);
+    padding: .16rem .45rem;
+    border-radius: 2px;
+    letter-spacing: .02em;
+  }
+  .stage-head h3 {
+    font-family: var(--display);
+    font-size: 1.22rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  .runtime {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: .76rem;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 860px) {
+    .cols { grid-template-columns: 0.92fr 1.32fr 0.92fr; }
+    .cols > div + div { border-left: 1px solid var(--rule); }
+  }
+  @media (max-width: 859px) {
+    .cols > div + div { border-top: 1px solid var(--rule); }
+  }
+
+  .cell { padding: 1.15rem 1.4rem 1.35rem; }
+
+  .cell h4 {
+    font-family: var(--display);
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 .75rem;
+  }
+  .cell p { margin: 0 0 .65rem; font-size: .96rem; }
+  .cell p:last-child { margin-bottom: 0; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .42rem; }
+  ul.items li {
+    font-family: var(--mono);
+    font-size: .8rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    padding-left: .85rem;
+    position: relative;
+  }
+  ul.items li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: .52em;
+    width: .3rem; height: .3rem;
+    border-radius: 50%;
+    background: var(--land);
+  }
+  ul.items li.water::before { background: var(--water); }
+  ul.items li em {
+    font-family: var(--body);
+    font-style: normal;
+    color: var(--ink-faint);
+    font-size: .85rem;
+  }
+  .none {
+    font-family: var(--body);
+    font-size: .93rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .modules {
+    margin-top: .95rem;
+    padding-top: .8rem;
+    border-top: 1px dashed var(--rule);
+    font-family: var(--mono);
+    font-size: .74rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    word-break: break-word;
+  }
+
+  /* ── notes ──────────────────────────────────────────── */
+  .notes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
+  @media (min-width: 760px) { .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .note {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--land);
+    border-radius: 3px;
+    padding: 1.25rem 1.4rem 1.4rem;
+    box-shadow: var(--shadow);
+  }
+  .note h3 {
+    font-family: var(--display);
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin: 0 0 .55rem;
+  }
+  .note p { margin: 0 0 .6rem; font-size: .95rem; color: var(--ink-soft); }
+  .note p:last-child { margin-bottom: 0; }
+  code {
+    font-family: var(--mono);
+    font-size: .84em;
+    background: var(--water-dim);
+    color: var(--ink);
+    padding: .08em .34em;
+    border-radius: 2px;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+    font-family: var(--display);
+    font-size: .84rem;
+    color: var(--ink-faint);
+  }
+
+  a { color: var(--water); }
+  :focus-visible { outline: 2px solid var(--water); outline-offset: 3px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .stage { transition: border-left-color .18s ease; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Kantsoner morfologi &middot; dataflyt</p>
+    <h1>Fra nedbørfelt til tilstandsscore</h1>
+    <p class="lede">
+      Fire trinn gjør nasjonale kart- og høydedata om til tilstandsscorer for
+      kantsoner langs elver og innsjøer, på Vann-Netts offisielle elvenett. Første
+      trinn knytter alt til Vann-Nett-strekningene, så hver måling får
+      leveransenøkkelen sin fra start. Hvert trinn skriver resultatet til disk, så en
+      avbrutt kjøring kan fortsette fra siste fullførte trinn. Til slutt slås de 262
+      områdene sammen til én nasjonal leveranse.
+    </p>
+  </header>
+
+  <figure>
+    <div class="scroller">
+      <svg viewBox="0 0 1140 320" role="img"
+           aria-label="Fire trinn per område og en nasjonal sammenslåing: geometry leser Vann-Nett elvenett og innsjøer, grunnkart, FKB-Vann og nedbørfeltet, og gir 10 m-segmenter, strandsegmenter og kantsoner videre; attributes leser CHM, DTM, grunnkart, FKB-bygninger, NVE- og Vegvesen-data og grøfter og skriver attributes.gpkg; derived leser DTM for strømningsretning og skriver derived.gpkg; aggregation leser ingen eksterne data og skriver leveransen per område; sammenslåingen samler alle områdene til nasjonale filer.">
+        <style>
+          .w { fill: var(--water); }
+          .ws { stroke: var(--water); }
+          .t { font-family: "JetBrains Mono", monospace; font-size: 10.5px; fill: currentColor; opacity: .72; }
+          .h { font-family: "JetBrains Mono", monospace; font-size: 9.5px; fill: var(--water); }
+          .n { font-family: "Familjen Grotesk", sans-serif; font-weight: 600; fill: currentColor; }
+          .s { font-family: "JetBrains Mono", monospace; font-size: 9.5px; fill: currentColor; opacity: .6; }
+          .lab { font-family: "Familjen Grotesk", sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.4px; fill: currentColor; opacity: .45; }
+        </style>
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path class="w" d="M 0 0 L 10 5 L 0 10 z"/>
+          </marker>
+        </defs>
+
+        <text x="8" y="12" class="lab">EKSTERNE DATA INN</text>
+        <text x="8" y="312" class="lab">PÅ DISK, MELLOM TRINNENE</text>
+
+        <!-- L1 geometry: elv + innsjø -->
+        <text x="85" y="34" text-anchor="middle" class="t">Vann-Nett elvenett</text>
+        <text x="85" y="50" text-anchor="middle" class="t">Vann-Nett innsjøer</text>
+        <text x="85" y="66" text-anchor="middle" class="t">Grunnkart vann</text>
+        <text x="85" y="82" text-anchor="middle" class="t">FKB-Vann linjer</text>
+        <text x="85" y="98" text-anchor="middle" class="t">nedbørfelt</text>
+        <line x1="85" y1="108" x2="85" y2="132" stroke="currentColor" stroke-width="1" opacity=".38" marker-end="url(#ar)"/>
+        <rect x="10" y="138" width="150" height="70" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="85" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" class="w">L1</text>
+        <text x="85" y="182" text-anchor="middle" font-size="17" class="n">geometry</text>
+        <text x="85" y="199" text-anchor="middle" class="s">elv + innsjø</text>
+
+        <!-- L2 attributes -->
+        <text x="315" y="24" text-anchor="middle" class="t">CHM 1 m</text>
+        <text x="315" y="40" text-anchor="middle" class="t">DTM 1 m</text>
+        <text x="315" y="56" text-anchor="middle" class="t">Grunnkart</text>
+        <text x="315" y="72" text-anchor="middle" class="t">FKB-Bygning</text>
+        <text x="315" y="88" text-anchor="middle" class="t">NVE + Vegvesen</text>
+        <text x="315" y="104" text-anchor="middle" class="t">grøfter</text>
+        <line x1="315" y1="112" x2="315" y2="132" stroke="currentColor" stroke-width="1" opacity=".38" marker-end="url(#ar)"/>
+        <rect x="240" y="138" width="150" height="70" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="315" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" class="w">L2</text>
+        <text x="315" y="182" text-anchor="middle" font-size="17" class="n">attributes</text>
+
+        <!-- L3 derived -->
+        <text x="545" y="98" text-anchor="middle" class="t">DTM <tspan font-family="Familjen Grotesk, sans-serif" font-style="italic" opacity=".75">(strømningsretning)</tspan></text>
+        <line x1="545" y1="108" x2="545" y2="132" stroke="currentColor" stroke-width="1" opacity=".38" marker-end="url(#ar)"/>
+        <rect x="470" y="138" width="150" height="70" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="545" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" class="w">L3</text>
+        <text x="545" y="182" text-anchor="middle" font-size="17" class="n">derived</text>
+
+        <!-- L4 aggregation -->
+        <text x="775" y="98" text-anchor="middle" font-family="Familjen Grotesk, sans-serif" font-size="11" font-style="italic" fill="currentColor" opacity=".42">ingen eksterne data</text>
+        <rect x="700" y="138" width="150" height="70" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="775" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" class="w">L4</text>
+        <text x="775" y="182" text-anchor="middle" font-size="15" class="n">aggregation</text>
+
+        <!-- nasjonal sammenslåing -->
+        <text x="1005" y="82" text-anchor="middle" class="t">Vann-Nett 2026-10-26</text>
+        <text x="1005" y="98" text-anchor="middle" class="t">CHM <tspan font-family="Familjen Grotesk, sans-serif" font-style="italic" opacity=".75">(enkelttrær)</tspan></text>
+        <line x1="1005" y1="108" x2="1005" y2="132" stroke="currentColor" stroke-width="1" opacity=".38" marker-end="url(#ar)"/>
+        <rect x="930" y="138" width="150" height="70" rx="2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 3"/>
+        <text x="1005" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" class="w">nasjonalt</text>
+        <text x="1005" y="182" text-anchor="middle" font-size="15" class="n">sammenslåing</text>
+        <text x="1005" y="199" text-anchor="middle" class="s">merge_delivery.py</text>
+
+        <!-- overleveringer -->
+        <line x1="160" y1="173" x2="240" y2="173" class="ws" stroke-width="1.6" marker-end="url(#arw)"/>
+        <line x1="200" y1="212" x2="200" y2="222" class="ws" stroke-width="1" opacity=".5"/>
+        <text x="200" y="234" text-anchor="middle" class="h">10 m-segmenter</text>
+        <text x="200" y="246" text-anchor="middle" class="h">strandsegmenter</text>
+        <text x="200" y="258" text-anchor="middle" class="h">+ kantsoner</text>
+
+        <line x1="390" y1="173" x2="470" y2="173" class="ws" stroke-width="1.6" marker-end="url(#arw)"/>
+        <line x1="430" y1="212" x2="430" y2="228" class="ws" stroke-width="1" opacity=".5"/>
+        <text x="430" y="240" text-anchor="middle" class="h">attributes.gpkg</text>
+
+        <line x1="620" y1="173" x2="700" y2="173" class="ws" stroke-width="1.6" marker-end="url(#arw)"/>
+        <line x1="660" y1="212" x2="660" y2="228" class="ws" stroke-width="1" opacity=".5"/>
+        <text x="660" y="240" text-anchor="middle" class="h">derived.gpkg</text>
+
+        <line x1="850" y1="173" x2="930" y2="173" class="ws" stroke-width="1.6" marker-end="url(#arw)"/>
+        <line x1="890" y1="212" x2="890" y2="228" class="ws" stroke-width="1" opacity=".5"/>
+        <text x="890" y="240" text-anchor="middle" class="h">delivery/</text>
+        <text x="890" y="252" text-anchor="middle" class="h">× 262 områder</text>
+
+        <!-- leveranse -->
+        <line x1="1005" y1="212" x2="1005" y2="222" class="ws" stroke-width="1" opacity=".5"/>
+        <text x="1005" y="234" text-anchor="middle" class="h">10 / 100 / 500 / 1000 m</text>
+        <text x="1005" y="246" text-anchor="middle" class="h">vannforekomst · vannområde</text>
+        <text x="1005" y="258" text-anchor="middle" class="h">region</text>
+        <text x="1005" y="270" text-anchor="middle" class="h">innsjø: strand + polygon</text>
+        <text x="1005" y="282" text-anchor="middle" class="h">buffer10 · lake_buffer10</text>
+        <text x="1005" y="294" text-anchor="middle" class="h">single_trees</text>
+      </svg>
+    </div>
+    <figcaption>
+      Hver overgang mellom trinn er en fil på disk. 10 m-segmentets id lages i
+      <strong>geometry</strong> og følger med uendret til leveransen. L1&ndash;L4
+      kjøres per område; sammenslåingen er et eget skript som bare leser de ferdige
+      områdene.
+    </figcaption>
+  </figure>
+
+  <section class="stages">
+
+    <!-- L1 -->
+    <article class="stage">
+      <div class="stage-head">
+        <span class="lnum">L1</span>
+        <h3>geometry</h3>
+        <span class="runtime">eksempel: 010 Hurumlandet &middot; 76 s</span>
+      </div>
+      <div class="cols">
+        <div class="cell">
+          <h4>Leser</h4>
+          <ul class="items">
+            <li>Vann-Nett elvenett <em>&mdash; identitet og topologi</em></li>
+            <li>Vann-Nett innsjøvannforekomster <em>&mdash; hvilke vannflater som er innsjøer</em></li>
+            <li>Grunnkart elver og innsjøer <em>&mdash; presis strandlinje</em></li>
+            <li>FKB-Vann ElvBekk / KanalGr&oslash;ft-linjer <em>&mdash; småbekker, ~75 % av nettet</em></li>
+            <li>vassdragomr.gpkg <em>&mdash; nedbørfeltets grense</em></li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Gjør</h4>
+          <p><strong>Elv: alt knyttes til elvenettet.</strong> Hver offisiell strekning
+          får en rute ned sitt fysiske løp &mdash; forankret i vannet i begge ender,
+          billigst langs midten av vannflaten, dyr på land. Strekningen deles i
+          <strong>10 m-segmenter</strong>, som er leveransenøkkelen, og hvert segment
+          tar den delen av ruten som ligger nærmest. Ut fra dette deles båndet
+          0&ndash;20 m fra vannkanten i <strong>én kantsone per segment og
+          elvebredd</strong>, venstre og høyre.</p>
+          <p><strong>Innsjø: målt fra strandlinjen.</strong> Elvenettets midtlinje
+          gjennom en innsjø når ikke land. Vann-Netts innsjø velger og navngir
+          vannflaten; grunnkartets strandlinje (med øyer) deles i 10 m-strandsegmenter,
+          hvert med sin kantsone på land.</p>
+          <div class="modules">elvis &middot; creek_polygons &middot; segment_zones &middot; lakes &middot; landegrense</div>
+        </div>
+        <div class="cell">
+          <h4>Skriver</h4>
+          <ul class="items">
+            <li class="water">rivers.gpkg</li>
+            <li class="water">routes.gpkg</li>
+            <li class="water">segments_10m.gpkg</li>
+            <li class="water">claims.gpkg</li>
+            <li class="water">zones_left.gpkg</li>
+            <li class="water">zones_right.gpkg</li>
+            <li class="water">buffer3 / 10 / 20.gpkg</li>
+            <li class="water">lake_polygons.gpkg</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- L2 -->
+    <article class="stage">
+      <div class="stage-head">
+        <span class="lnum">L2</span>
+        <h3>attributes</h3>
+        <span class="runtime">eksempel: 010 Hurumlandet &middot; ~6 min &middot; i bolker</span>
+      </div>
+      <div class="cols">
+        <div class="cell">
+          <h4>Leser</h4>
+          <ul class="items">
+            <li class="water">segmenter, kantsoner og buffere <em>&mdash; fra L1</em></li>
+            <li>CHM 1 m <em>&mdash; vegetasjonshøyde</em></li>
+            <li>DTM 1 m <em>&mdash; terreng</em></li>
+            <li>Grunnkart <em>&mdash; arealdekke, veier</em></li>
+            <li>FKB-Bygning / BygnAnlegg</li>
+            <li>NVE flom- og erosjonssikring, SVV plastring</li>
+            <li>predikerte gr&oslash;fter</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Gjør</h4>
+          <p><strong>Måler terrenget.</strong> Alt her er observert i data, ikke regnet
+          ut fra andre attributter, og knyttet direkte til segmentet.</p>
+          <p>Trekroner finnes i høydemodellen per bolk, og dekningen måles per
+          høydeklasse i hver kantsone, i båndene 0&ndash;3, 0&ndash;10 og 0&ndash;20 m.
+          Helning, arealklasser, forventet dekning, bygninger, veier, sikringstiltak og
+          grøfter måles på samme måte. Elvebredden måles fra segmentets egen del av
+          ruten, fordi elvenettets linje ofte ligger på land.</p>
+          <div class="modules">singletree &middot; vegetation &middot; canopy &middot; channel &middot; grofter &middot; terrain &middot; landcover &middot; infrastructure &middot; rorlagt &middot; laser_metadata</div>
+        </div>
+        <div class="cell">
+          <h4>Skriver</h4>
+          <ul class="items">
+            <li class="water">attributes.gpkg <em>&mdash; segmentene med alle målte kolonner</em></li>
+            <li class="water">_singletree_*.gpkg <em>&mdash; trekroner, bare med KANTSONER_EXPORT_SINGLETREE</em></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- L3 -->
+    <article class="stage">
+      <div class="stage-head">
+        <span class="lnum">L3</span>
+        <h3>derived</h3>
+        <span class="runtime">eksempel: 010 Hurumlandet &middot; 17 s</span>
+      </div>
+      <div class="cols">
+        <div class="cell">
+          <h4>Leser</h4>
+          <ul class="items">
+            <li class="water">attributes.gpkg <em>&mdash; fra L2</em></li>
+            <li>DTM 1 m <em>&mdash; bare strømningsretning</em></li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Gjør</h4>
+          <p><strong>Alle formlene, også de som bruker nettverket.</strong> Formlene for
+          system A og B er rene tabellberegninger uten kartgeometri, så hele metoden kan
+          testes på en liten testtabell.</p>
+          <p>Deretter bygges et rettet nettverk direkte på segmentene (endepunkter
+          koblet, retning fra terrenget), og det brukes til Barrier, Fragmentering,
+          konnektivitet og prioritet. Oppstuving beregnes også, men leveres ikke.
+          Strandsegmentene arver nettverksverdiene fra innsjøens midtlinje.</p>
+          <div class="modules">derived/* &middot; geometry/graph &middot; network/barriers &middot; connectivity &middot; priority</div>
+        </div>
+        <div class="cell">
+          <h4>Skriver</h4>
+          <ul class="items">
+            <li class="water">derived.gpkg <em>&mdash; + formler og nettverkskolonner</em></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- L4 -->
+    <article class="stage">
+      <div class="stage-head">
+        <span class="lnum">L4</span>
+        <h3>aggregation</h3>
+        <span class="runtime">eksempel: 010 Hurumlandet &middot; 1 s</span>
+      </div>
+      <div class="cols">
+        <div class="cell">
+          <h4>Leser</h4>
+          <ul class="items">
+            <li class="water">derived.gpkg <em>&mdash; fra L3</em></li>
+            <li class="water">lake_polygons.gpkg <em>&mdash; fra L1</em></li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Gjør</h4>
+          <p><strong>Summerer opp.</strong> 10 m-segmentene samles til
+          100 m &rarr; 500 m &rarr; 1000 m &rarr; elv &rarr; region, og strandsegmentene
+          til én rad per innsjø. Bare tellbare størrelser (lengder, arealer) summeres;
+          hver andel og hver grad 1&ndash;5 regnes på nytt på hvert nivå, slik at
+          nivåene henger sammen.</p>
+          <p>Fullstendige tabeller blir liggende i <code>aggregation/</code>.
+          <code>delivery/</code> får bare leveransekolonnene: identitet og det som
+          leveres, ikke mellomregningene.</p>
+          <div class="modules">delivery/aggregate &middot; delivery/lakes &middot; delivery/trim</div>
+        </div>
+        <div class="cell">
+          <h4>Skriver (delivery/)</h4>
+          <ul class="items">
+            <li class="water">official_centerline_10m.gpkg</li>
+            <li class="water">official_centerline_100m.gpkg</li>
+            <li class="water">official_centerline_500m.gpkg</li>
+            <li class="water">official_centerline_1000m.gpkg</li>
+            <li class="water">official_centerline_river.gpkg</li>
+            <li class="water">official_centerline_region.gpkg</li>
+            <li class="water">lake_shore.gpkg <em>&mdash; strandsegmentene, 0&ndash;20 m-sonen</em></li>
+            <li class="water">lake_polygon.gpkg <em>&mdash; én rad per innsjø</em></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- nasjonal sammenslåing -->
+    <article class="stage">
+      <div class="stage-head">
+        <span class="lnum">nasjonalt</span>
+        <h3>sammenslåing &middot; scripts/merge_delivery.py</h3>
+      </div>
+      <div class="cols">
+        <div class="cell">
+          <h4>Leser</h4>
+          <ul class="items">
+            <li class="water">delivery/ fra alle områder</li>
+            <li class="water">soner og segmenter fra L1, derived.gpkg fra L3 <em>&mdash; for buffer10 og omregning</em></li>
+            <li>Vann-Nett vannforekomster, nedlastet 2026-10-26</li>
+            <li>CHM 1 m <em>&mdash; bare for single_trees</em></li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Gjør</h4>
+          <p><strong>Ett sett filer for hele landet.</strong> Hvert segment får
+          vannforekomst og navn fra Vann-Nett-filen, og vannområdet
+          (<code>eUVannomradeId</code>) det ligger mest i. Vann som ble kjørt i to
+          nabofelt beholdes én gang, og de berørte radene regnes på nytt med
+          pipelinens egne regler. Strand som deles mellom innsjøer fordeles på riktig
+          innsjø.</p>
+          <p>Til slutt sjekkes hver vannforekomstlinje mot resultatet, og en README med
+          lag, rader og felt skrives.</p>
+        </div>
+        <div class="cell">
+          <h4>Skriver</h4>
+          <ul class="items">
+            <li class="water">official_centerline_10m / 100m / 500m / 1000m / region</li>
+            <li class="water">official_centerline_river <em>&mdash; én rad per vannforekomst</em></li>
+            <li class="water">official_centerline_vannomraade</li>
+            <li class="water">lake_shore &middot; lake_polygon</li>
+            <li class="water">buffer10 &middot; lake_buffer10 <em>&mdash; 0&ndash;10 m-sonene som flater</em></li>
+            <li class="water">single_trees <em>&mdash; kjøres for seg</em></li>
+            <li class="water">kontrollfiler (.csv, .gpkg) og README.md</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <section>
+    <h2>Kjøretid</h2>
+    <div class="notes">
+      <div class="note">
+        <h3>Nedbørfeltene kjøres parallelt</h3>
+        <p>Landet er delt i 262 områder (nedbørfelt), og de er uavhengige av
+        hverandre. Flere områder kjøres derfor samtidig, hvert i sin egen prosess
+        (<code>run.workers</code> i konfigurasjonen, eller <code>--workers</code>). De
+        største startes først, slik at ikke et stort område blir startet sent og
+        kjører alene til slutt.</p>
+        <p>Grensen for hvor mange som kan kjøre samtidig er minnet, ikke antall
+        kjerner. Et nytt område startes bare når det er nok ledig minne
+        (<code>run.min_free_gb</code>), og med <code>run.mem_budget_gb</code> venter
+        hvert trinn på plass i et felles minnebudsjett.</p>
+      </div>
+      <div class="note">
+        <h3>Det største feltet bestemmer totaltiden</h3>
+        <p>Ett område kan ikke deles på flere prosesser: de fire trinnene kjøres
+        etter hverandre i samme prosess. Inne i området er det bare soneberegningen i
+        <code>geometry</code> som fordeles på flere kjerner.</p>
+        <p>Områdene varierer fra 62 til 43&nbsp;000 km². Glomma er størst, med rundt
+        105&nbsp;000 strekninger og 5,9 millioner 10 m-segmenter, og bruker opptil
+        rundt 90 GB minne i de tyngste trinnene. Glomma alene tar om lag to døgn.
+        Flere parallelle prosesser gjør ikke det kortere: når resten av landet er
+        ferdig, er det Glomma som avgjør når kjøringen er ferdig.</p>
+      </div>
+      <div class="note">
+        <h3>Hvorfor det finnes to elvegeometrier &mdash; og én nøkkel</h3>
+        <p><strong>Grunnkart</strong> legger elvebredden riktig til innenfor en meter,
+        og det er det som gjør en måling 0&ndash;10 m fra vannkanten meningsfull
+        &mdash; men flatene har ingen identitet eller topologi.</p>
+        <p><strong>Vann-Nett</strong> er grovere, men er det offisielle nettet
+        resultatene leveres på. Geometry-trinnet kobler dem én gang: en rute gjennom
+        vannflatene gjenskaper hver strekningens løp, og hver kantsone vet fra start
+        hvilket 10 m-segment den hører til.</p>
+      </div>
+      <div class="note">
+        <h3>Hvorfor trinnene skriver filer</h3>
+        <p>En nasjonal kjøring tar dager, så hvert trinn skriver resultatet sitt og
+        neste trinn leser det. <code>kantsoner run --from attributes</code> fortsetter
+        et område der geometrien allerede finnes, og mellomfilene kan åpnes direkte i
+        QGIS for kontroll.</p>
+        <p>I <code>attributes</code> gjelder det samme i mindre skala: hele
+        strekninger samles i romlig sammenhengende bolker, så minnebruken holder seg
+        jevn uansett hvor stort området er.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Kjøretidene per trinn er målt på 010 Hurumlandet &oslash;st og s&oslash;r
+    (191 km&sup2;, 12&nbsp;553 segmenter, 19&nbsp;494 kantsoner).
+  </footer>
+
+</div>

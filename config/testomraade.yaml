@@ -1,0 +1,51 @@
+# Kantsoner: lite testområde for å kontrollere at hele kjeden kjører.
+#
+# Samme oppsett som config/config.yaml, men alle kilder er utsnitt rundt
+# Korsrudtjernet (Lunner/Gran, vassdragsområde 012), lagret i data/testomraade/.
+# Se data/testomraade/README.md. Kjøres fra roten av repoet:
+#
+#   uv run kantsoner run -c config/testomraade.yaml
+#
+# Resultatene havner i outputs/testomraade/. Testen tests/test_integrasjon.py
+# kjører det samme, pluss scripts/merge_delivery.py.
+
+crs: EPSG:25833
+
+paths:
+  base_dir: outputs/testomraade
+  # Ett område: utsnittets avgrensning, med navnet under `regions`.
+  vassdragomr: data/testomraade/vassdragomr/vassdragomr.gpkg
+  chm: data/testomraade/hoydedata/chm_norway_1m_epsg25833_20260911.tif
+  dtm: data/testomraade/hoydedata/dtm_norway_1m_epsg25833_20260911_filled.tif
+  # Utsnitt av FileGDB-en, lagret som GeoPackage (samme lag og felt).
+  grunnkart_dir: data/testomraade/grunnkart/grunnkart_arealanalyse_2025.gpkg
+  elvenett: data/testomraade/elvenett/elvenett_vn_patched_20261106.gpkg
+  fkb:
+    bygning_dir: data/testomraade/fkb/FKB-Bygning
+    bygnanlegg_dir: data/testomraade/fkb/FKB-BygnAnlegg
+    vann_dir: data/testomraade/fkb/FKB-Vann
+  nve:
+    flomsikring_line: data/testomraade/nve/sikringstiltak_Flomsikring_line_nve.gpkg
+    flomsikring_punkt: data/testomraade/nve/sikringstiltak_Flomsikring_punkt_nve.gpkg
+    erosjonssikring_line: data/testomraade/nve/sikringstiltak_Erosjonssikring_line_nve.gpkg
+    erosjonssikring_punkt: data/testomraade/nve/sikringstiltak_Erosjonssikring_punkt_nve.gpkg
+    dam_line: data/testomraade/nve/damlinje_nve.gpkg
+    dam_punkt: data/testomraade/nve/dampunkt_nve.gpkg
+  vegvesen: data/testomraade/vegvesen/PlastringErosjonssikri_144.gpkg
+  grofter: data/testomraade/grofter/20251128_rgb-dtm_grofter_pred_skeletonized.gpkg
+  fremmedart: data/testomraade/fremmedart/Artsdatabanken_merged_v01.gpkg
+  elvevannforekomster: data/testomraade/vannnett/elvevannforekomster_20261026.gpkg
+  vannforekomster: data/testomraade/vannnett/innsjovannforekomster_20261026.gpkg
+  nhm_prosjektdekning: data/testomraade/nhm_prosjektdekning/NHM_ProsjektDekning.shp
+  landegrense: data/testomraade/administrative/administrative-enheter-NORGE.gpkg
+
+regions:
+  - Testområde Korsrudtjernet
+
+run:
+  include_creeks: true
+  workers: 1
+  batch_segments: 50000
+  # Lavt, så testen kjører også på en vanlig PC.
+  min_free_gb: 2
+  mem_budget_gb: 0

@@ -1,0 +1,373 @@
+# Kantsoner: datakilder og kjøreinnstillinger.
+#
+# Her står bare hvor inndataene ligger og hvordan kjøringen settes opp.
+# Metodekonstanter (koeffisienter, terskler, klassetabeller) er en del av
+# spesifikasjonen og ligger i src/kantsoner/spec/constants.py. Mappestrukturen
+# for resultatene per område bygges i src/kantsoner/config.py.
+#
+# Stiene er plassholdere; bytt dem ut med lokale mapper før kjøring:
+#   <DATA> = lokal datamappe med inndatasettene
+#   <OUT>  = utdatamappe for resultatene
+# Filnavn, datoer og kjøreinnstillinger er de som ble brukt i den nasjonale
+# kjøringen bak leveransen (2026-10-29 til 2026-11-09).
+#
+# Sjekk at alle kilder kan åpnes før en lang kjøring:  kantsoner config check
+
+crs: EPSG:25833
+
+paths:
+  # Utdatamappe; én undermappe per område.
+  base_dir: <OUT>
+
+  # NVE Vassdragsområder (polygoner). Gir avgrensningen av hvert område.
+  vassdragomr: <DATA>/vassdragomr/vassdragomr.gpkg
+
+  # Kartverket/Høydedata (hoydedata.no), nasjonal 1 m terrengmodell (DTM) og
+  # vegetasjonshøyde (CHM), fliser per 2026-09-11. Hull i DTM er fylt
+  # (_filled). CHM: trehøyde og tredekning; DTM: helning og rutingen av elveløpet.
+  chm: <DATA>/hoydedata/chm_norway_1m_epsg25833_20260911.tif
+  dtm: <DATA>/hoydedata/dtm_norway_1m_epsg25833_20260911_filled.tif
+
+  # Geonorge Grunnkart for arealanalyse (SSB/NIBIO), årsversjon 2025, nasjonal
+  # FileGDB. Elve- og innsjøflater, arealdekke og bebygd areal.
+  grunnkart_dir: <DATA>/grunnkart/Basisdata_0000_Norge_25833_GrunnkartArealanalyse_FGDB.gdb
+
+  # NVE ELVIS elvenett, supplert med Vann-Nett-linjer (scripts/patch_elvis.py),
+  # versjon 2026-11-06. Leveransens elvegeometri: 10 m-segmentene kuttes herfra.
+  elvenett: <DATA>/elvenett/elvenett_vn_patched_20261106.gpkg
+
+  # Kartverket/Geovekst FKB, én GeoPackage per kommune (EPSG:3044).
+  # Bygning/BygnAnlegg: bygninger; Vann: bekker som linjer (run.include_creeks).
+  fkb:
+    bygning_dir: <DATA>/fkb/FKB-Bygning
+    bygnanlegg_dir: <DATA>/fkb/FKB-BygnAnlegg
+    vann_dir: <DATA>/fkb/FKB-Vann
+
+  # NVE sikringstiltak (flom- og erosjonssikring, linjer og punkter) og
+  # damlinjer/dampunkter. Gir Flomvern, Forbygning og vandringshindre.
+  nve:
+    flomsikring_line: <DATA>/nve/sikringstiltak_Flomsikring_line_nve.gpkg
+    flomsikring_punkt: <DATA>/nve/sikringstiltak_Flomsikring_punkt_nve.gpkg
+    erosjonssikring_line: <DATA>/nve/sikringstiltak_Erosjonssikring_line_nve.gpkg
+    erosjonssikring_punkt: <DATA>/nve/sikringstiltak_Erosjonssikring_punkt_nve.gpkg
+    dam_line: <DATA>/nve/damlinje_nve.gpkg
+    dam_punkt: <DATA>/nve/dampunkt_nve.gpkg
+
+  # Statens vegvesen, plastring/erosjonssikring. Telles i Forbygning sammen
+  # med NVE.
+  vegvesen: <DATA>/vegvesen/PlastringErosjonssikri_144.gpkg
+
+  # Kildene under er valgfrie: mangler en, hoppes attributtene den gir over.
+
+  # Field Geospatial, grøfter predikert fra RGB og DTM (2025-11-28). Må være
+  # _pred_skeletonized-filen (har type = ditch/stream). Gir grøfteattributtene.
+  grofter: <DATA>/grofter/20251128_rgb-dtm_grofter_pred_skeletonized.gpkg
+  # Artsdatabanken, funn av fremmede arter langs vann (parkslirekne,
+  # kjempespringfrø, vasspest), samlet av Field Geospatial (v01). Gir
+  # fremmedart_risiko og K_S_d.
+  fremmedart: <DATA>/fremmedart/Artsdatabanken_merged_v01.gpkg
+  # Miljødirektoratet Vann-Nett, elvevannforekomster (linjer), Geonorge
+  # 2026-10-26, konvertert med scripts/vannnett_from_geonorge.py. Gir
+  # vannforekomstid til hvert segment.
+  elvevannforekomster: <DATA>/vannnett/elvevannforekomster_20261026.gpkg
+  # Miljødirektoratet Vann-Nett, innsjøvannforekomster, samme nedlasting.
+  # Bestemmer hvilke innsjøer som leveres som innsjø (lake_*-lagene).
+  # scripts/merge_delivery.py leser i tillegg hele nedlastingen som én fil
+  # (vannforekomster_20261026.gpkg, FileGDB konvertert med ogr2ogr), så
+  # leveransen får de samme ID-ene som kjøringen.
+  vannforekomster: <DATA>/vannnett/innsjovannforekomster_20261026.gpkg
+  # Kartverket NHM_ProsjektDekning, dekning per laserprosjekt. Gir
+  # skanneåret til hvert segment (K_S_Laser_aar).
+  nhm_prosjektdekning: <DATA>/nhm_prosjektdekning/NHM_ProsjektDekning.shp
+  # Kartverket Administrative enheter (Geonorge), Norges yttergrense.
+  # Klipper kantsoner ved riksgrensen; elvebredd i utlandet merkes Utenfor_Norge.
+  landegrense: <DATA>/administrative/administrative-enheter-NORGE.gpkg
+
+# Områdene som kjøres: ett NVE vassdragsområde per linje, med navnet nøyaktig
+# som i vassdragomr (feltet vassomr). Områdenummeret hentes derfra.
+regions:
+  - Adamselvvassdraget/indre Laksefjorden øst
+  - Alsten og Tjøtta
+  - Altavassdraget/Altafjorden
+  - Andørja
+  - Andøya
+  - Arendalsvassdraget/kyst Moland-Homborsund
+  - Arnøya og Laukøya
+  - Askøya og Holsnøya
+  - Audna/kyst Mandal by-Lindesnes
+  - Aukra, Misund og Sandøy kommuner
+  - Aulivassdraget/kyst Tønsberg-Sandefjord
+  - Aurlandsvassdraget/Aurlandsfjorden
+  - Averøy, Frei og Kristiansund kommuner
+  - Beiarelva, Morsdalsfjorden og Nordfjorden
+  - Bergebyelva og Vesterelva/indre Varangerfjord
+  - Bergen og omegn
+  - Bergsdalsvassdraget/kyst Salhus-Dale
+  - Bindalsfjorden nord
+  - Bjerkreimvassdraget/kyst Sokndal-Ogna
+  - Blåelva/kyst Etnefjorden-Sunde
+  - "Breimsvassdraget/Nordfjord sør: Hyenfjorden-Innvik"
+  - Bremangerlandet
+  - Bømlo
+  - Børselvvassdraget/indre Porsangen øst
+  - Dalelven
+  - Drammensvassdraget/Drammensfjorden vest
+  - Driva/tTngvollfjorden og Sunndalsfjorden
+  - Dønna og Herøy kommuner
+  - Eidfjordvassdraget, Kinso og Sima/kyst Krossanes-Osafjorden
+  - Eira/langfjorden
+  - Eksingedalsvassdraget/Eidsfjorden
+  - Etnevassdraget/Ålfjorden og Etnefjorden
+  - Fagerbakkvassdraget og Laksåga/Sørfolda sør
+  - Figgjo/Jæren
+  - Fjelna/Korsnesfjord sør og Vinjefjord
+  - Flakstadøya og Moskenesøya
+  - Follavassdraget/Beitstadfjorden vest
+  - Forsåvassdraget/Efjorden
+  - Fortunvassdraget/Lusterfjorden øst og nord
+  - Fosnøya, Radøya og Fedje
+  - Frafjordelva/Høgsfjorden og Frafjorden
+  - Frænfjorden, Julsundet og Hustadvika
+  - Frøya kommune
+  - Fusta og Drevja/Vefsnfjorden nord
+  - Fykanåga/Glomfjorden, Gåsværfjorden og Sørfjorden
+  - Gaula/kyst Viggjaneset-Flakk
+  - Gaularvassdraget/Dalsfjorden
+  - Gjengedalsvassdraget/Frøysjøen og ytre Nordfjord sør
+  - Glommavassdraget/Hvaler og Singlefjorden
+  - Granvinfjorden og Samlafjorden nord
+  - Gratangen og Lavangen
+  - Grense Jakobselv/Varangerfjorden øst
+  - Grytøya, Bjarkøya og Sandsøya
+  - Guddalsvassdraget/Åfjorden og Vilnesfjorden sør
+  - Gusdalelva/Vanylvsfjorden og Syltefjorden
+  - Gusjåvassdraget/Moldefjorden og Fannefjorden
+  - Hadseløya
+  - Haldenvassdraget/Iddefjorden
+  - "Hardangerfjorden øst: Sunde-Ænes"
+  - Hareidlandet og Gurskøya
+  - Hellemovassdraget/Tysfjord kommune
+  - Hitra kommune
+  - Hofstadelva/Frohavet nord
+  - Hopsfjorden
+  - Hornindalvassdraget/Nordfjord nord
+  - Hurumlandet øst og sør
+  - Hølenelva/Drøbaksundet øst
+  - Høyangervassdraget/kyst Dragsvik-Kyrkjebø
+  - Indalselven
+  - Indre Folda
+  - Indre Ofotfjorden
+  - Ingøya og Rolvsøya
+  - Jostedøla/Lusterfjorden vest
+  - Jølstra/Førdefjorden
+  - Jørpelandsåna/Strand kommune
+  - Karmøy
+  - Kemijoki
+  - Klokkerelvvassdraget/Bugøyfjorden
+  - Kobbelvvassdraget/Sørfolda nord
+  - Komagelva og Skallelvvassdraget/kyst Kibergneset-Skallnes
+  - Kongsfjordvassdraget/Kongsfjorden
+  - Kornstadfjorden og Batnfjorden
+  - Kragerøvassdraget/bamble og Kragerø kommuner
+  - Kvaløya
+  - Kvaløya og Tromsøya
+  - Kvina/Fedafjorden
+  - Kvænangsvassdraget/Kvænangen sør
+  - Kyst Nedstrand-Haugesund-Tittelsnes
+  - Kyst Røyingen-Velfjorden
+  - Kyst Saltstraumen-Bodø-Tårnvikfjellet
+  - Kyst Tingvollfjorden-Surnadalsfjorden
+  - Kyst Utskarpen-Nesna-Tonnes
+  - Kåfjordvassdraget/Lyngen øst, Uløya, Kågen og Skjervøya
+  - Lakselva og Lyselvvassdraget/Senja øst
+  - Lakselva/Ullsfjorden og Sørfjorden
+  - Lakselvvassdraget/indre Porsangen sør
+  - Langfjordvassdraget/Langfjorden
+  - Langøya
+  - Leirfjord kommune
+  - Lierelva/Drammensfjorden øst
+  - Lindåshalvøya, Seimsfjorden og Austfjorden
+  - Ljusnan
+  - Lomsdalsvassdraget/Velfjorden og Vevelstadsundet
+  - Loppa kommune og Langfjorden
+  - Luleelven
+  - Lygna/kyst Lindesnes-Lista
+  - Lysakerelva
+  - Lysevassdraget/Lysefjorden
+  - Lærdalsvassdraget/Lærdalsfjorden
+  - Magerøya
+  - Mandalselva/kyst Flekkerøy-Mandal by
+  - Masfjorden
+  - Maurangerfjorden og Sildefjorden øst
+  - Midtfjorden sør og Romsdalsfjorden vest
+  - Mossevassdraget/kyst Onsøy-Son
+  - Målselvvassdraget/Malangen
+  - Namsen/Namsfjorden øst
+  - Neidenvassdraget/Munkfjorden
+  - Nesodden og Bunnefjorden
+  - Nidelvvassdraget/Strindfjorden
+  - Nordfolda
+  - Nordkinnhalvøya nord
+  - Nordkjoselva/Balsfjorden og Straumsfjorden
+  - Nordmarkvassdraget/kyst Gjersjøelva-Bygdøy
+  - Nordre Porsangerhalvøya, Måsøya og Hjelmsøya
+  - Numedalslågen og Siljanvassdraget/kyst Sandefjord-Mølen
+  - Nærøyelvi/Fresvikbreen
+  - "Ofotfjorden nord: Tangvik-Bogen-Selnes"
+  - Opo/Sørfjorden vest
+  - Oppløyvassdraget/Oppløyfjorden og Kvistfjorden
+  - Orkla/Orkdalsfjorden
+  - Osafjorden, Ulvikfjorden og Eidfjorden nord
+  - Oselvvassdraget/Flora kommune
+  - Osen og Flatanger kommuner
+  - Osterøya
+  - Otra/Kristiansand og Flekkerøy
+  - Pasvikelva/Bøkfjorden
+  - Piteelven
+  - Ranavassdraget/Ranafjorden nord
+  - Rauma/Romsdalsfjorden
+  - Rebbenesøya, Grytøya, Nord-Kvaløya og Helgøya
+  - Reisavassdraget/Reisafjorden
+  - Repparfjordvassdraget/Vargsundet og Sammelsund
+  - Reppenelva og Nyelvvassdraget/Varangerfjorden sør
+  - Ringvassøya
+  - Rolla
+  - Rovdefjorden sør og Syvdefjorden
+  - Russelvvassdraget/Revsbotn
+  - Ryfylkeøyane
+  - Røssåga/elsfjord og Sørfjorden
+  - Røst kommune
+  - "Røsta/Trondheimsleia: Aure-Stamnes"
+  - Sagelvvassdraget/ytre del av Hamarøy kommune
+  - Salangselva/Salangen
+  - Salsvatnvassdraget/kyst Namsos-Foldfjorden
+  - Saltelva/Skjerstadfjorden og Saltdalsfjorden sør
+  - "Saltfjorden: Nordfjorden-Skjerstad"
+  - Samlafjorden sør og Jondal kommune
+  - Samnangervassdraget/Fusafjorden
+  - Sandevassdraget/kyst Berger-Tønsberg
+  - Sandfjordelva/Persfjorden og Bussesundet
+  - Sandvikselva
+  - Saudavassdraget/Saudafjorden og Sandsfjorden nord
+  - Seiland
+  - Senja vest
+  - Signaldalselva/Lyngen vest
+  - Sildegapet
+  - Sira og Sokna/kyst Hidra-Sokndal
+  - "Skaudalsvassdraget/ytre Trondheimsfd: Stadsbygd-Brettingnes"
+  - Skellefteelven
+  - "Skibotnvassdraget/Lyngen: Skibotn-Kåfjorden"
+  - Skiensvassdraget/Langesundsfjorden
+  - Skjomavassdraget/Ofotfjorden sør
+  - Skoddebergvassdraget/Skånland kommune
+  - Skogerøya
+  - Skøelvvassdraget/kyst Salangen-Malangen og Dyrøya
+  - Smøla kommune
+  - Snåsavassdraget/Beitstadfjorden øst
+  - Sognesjøen sør
+  - Solund kommune
+  - Sotra
+  - Stabburselva/indre Porsangen vest
+  - Stavanger og Sandnes kommuner
+  - Steinslandsvassdraget/Osterfjorden nord
+  - Stigedalselva/voldafjorden, Austefjord og Dalsfjorden
+  - Stjernøya
+  - Stjørdalsvassdraget/Stjørdalsfjorden
+  - Stjørnfjorden
+  - Stordalselva/Åfjorden og Skråfjorden
+  - Stordalselvvassdraget/Tanafjorden øst og Trollfjorden
+  - Stordøya
+  - Storelva/Kvænangen nord
+  - Storelva/indre Laksefjorden vest
+  - Storfjorden sør, Hjørundfjorden og Sykkylvsfjorden
+  - Storfjorden sør, Sunnylvsfjorden og Geirangerfjorden
+  - Strynvassdraget/indre Nordfjord
+  - Strømsån
+  - Suldalsvassdraget/Sandsfjorden sør og Hylsfjorden
+  - Sulitjelmavassdraget/Skjerstadfjorden nord
+  - Surna/Surnadalsfjorden og Halsafjorden øst
+  - Sævareidelva/kyst Strandebarm-Strandvik
+  - Sørøya
+  - Tafjordvassdraget/Tafjorden og Norddalsfjorden sør
+  - Tana/Tanafjorden sør
+  - "Teksdalselva/frohavet sør: Garten-Lysøysund"
+  - Tjeldøya
+  - Torneelven
+  - Tovdalsvassdraget/Lillesand kommune
+  - Tromsøysundet og Grøtsundet øst, Reinøya og Karlsøya
+  - Trondheimsfjorden vest
+  - "Trondheimsfjorden øst: Frosta-Verdalsøra"
+  - "Trondheimsleia øst: Stamnes-Agdenes fyr"
+  - Tustna kommune og Ertvågøy
+  - Tysnes og Austevoll kommuner
+  - "Tysso/sørfjorden øst: Tysso-Krossanes"
+  - Ulla og Førreelva/Jøsenfjorden og Erfjorden
+  - Umeelven
+  - Valldøla/Norddalsfjorden nord og Storfjorden øst
+  - Vanern-gøta elv's sidenedbørfelt byelven
+  - Vanern-gøta elv's sidenedbørfelt klaraelven
+  - Vanern-gøta elv's sidenedbørfelt norselven
+  - Vanern-gøta elv's sidenedbørfelt upperudselven
+  - Vanna og Nord-Fugløya
+  - Vefsna/Vefsnfjorden sør
+  - Vega kommune
+  - Vegårsvassdraget og Gjerstadvassdraget/kyst Kragerø-Tromøya
+  - Verdalsvassdraget/Borgenfjorden
+  - Verransundet
+  - Vesterelvvassdraget/kyst Båtsfjordnæringen-Hamningberg
+  - Vestre Hinnøya
+  - Vestre Jakobselva/ytre Varangerfjord nord
+  - Vestre Porsangen
+  - Vestre Svartisen og Rødøy kommune
+  - Vestvågøy kommune
+  - Vetlefjorden og Fjærlandsfjorden
+  - Vikedalselva/vindafjorden
+  - Vikna og kyst Foldfjorden-Bindalsfjorden
+  - Viksvassdraget/Varmråk-Vangsnes
+  - Visten, Halsfjorden og ytre Vefsnfjorden øst
+  - Vossovassdraget/Bolstadfjorden
+  - Vågan kommune
+  - Værøy kommune
+  - Ytre Laksefjorden vest
+  - Ytre Laksefjorden øst
+  - "Ytre Trondheimsfjorden: Agdenes fyr-Geitaneset"
+  - Ytre del av Steigen kommune
+  - "Ytre sognefjorden sør: Rutledal-Varmråk"
+  - "ytre Sognefjorden nord: Kyrkjebø-Risnes"
+  - Åbjøra/Bindalsfjorden sør og Tosenfjorden
+  - Ålesund og omegn
+  - Ångermanelven
+  - Årdalselva/Årdalsfjorden
+  - Årdalsvassdraget/Årdalsfjorden
+  - Årgårdsvassdraget og Bogna/Namsfjorden sør
+  - Årosvassdraget/indre Oslofjorden vest
+  - Årøyvassdraget/kyst Kaupanger-Hella
+  - Åsenfjorden
+  - Ørstavassdraget/Ørstafjorden og Vartdalsfjorden sør
+  - Østre Hinnøya
+  - Østre Porsangen
+  - Øyer i Nesna, Lurøy og Træna kommuner
+  - Øygarden kommune
+
+# Innstillingene under er de som ble brukt i den nasjonale kjøringen.
+# include_creeks og batch_segments påvirker resultatet; de andre styrer bare
+# rekkefølge og minnebruk.
+run:
+  # Ta med småbekker som FKB-Vann har som linjer, men grunnkart ikke som
+  # flater (~75 % av nettet).
+  include_creeks: true
+  # Antall områder som kjøres samtidig, én prosess per område. Geometristeget
+  # deler maskinens kjerner på dette tallet, også når bare ett område kjører.
+  # Glomma kjøres først alene med -w 4 (ca. 53 timer, opptil 84 GB minne):
+  #   kantsoner run -w 4 -r "Glommavassdraget/Hvaler og Singlefjorden"
+  # deretter de øvrige 261 områdene med 12 samtidig.
+  workers: 12
+  # Segmenter per beregningsbolk (hele strekninger). Hver bolk leser sine
+  # egne data og knytter dammer til sine egne segmenter, så bolkinndelingen
+  # er en del av resultatet, ikke bare en minnegrense.
+  batch_segments: 50000
+  # Et nytt område (eller steg, med minneramme) startes bare når minst så
+  # mye minne (GB) er ledig.
+  min_free_gb: 25
+  # Felles minneramme (GB) for alle steg som kjører samtidig; 0 = av.
+  mem_budget_gb: 100
